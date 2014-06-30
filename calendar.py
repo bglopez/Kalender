@@ -93,10 +93,13 @@ class MainWindow(QMainWindow):
         if not self.modified:
             return True
 
+        if not self.path:
+            question = u"Ungespeicherte Änderungen in der neuen Datei gehen verloren. Möchten Sie die Datei vor dem Schließen speichern?"
+        else:
+            question = u"Ungespeicherte Änderungen in »%s« gehen verloren. Möchten Sie die Datei vor dem Schließen speichern?" % (self.path, )
+
         result = QMessageBox.question(
-            self,
-            u"Ungespeicherte Änderungen",
-            u"Ungespeicherte Änderungen gehen verloren. Möchten Sie die Datei vor dem Schließen speichern?",
+            self, u"Ungespeicherte Änderungen", question,
             QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
 
         if result == QMessageBox.Save:
