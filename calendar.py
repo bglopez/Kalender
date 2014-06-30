@@ -28,15 +28,20 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Kalender")
 
+        self.modified = True
+        self.path = None
+
     def initActions(self):
         self.newAction = QAction("Neu", self)
 
         self.openAction = QAction(u"Öffnen ...", self)
 
         self.saveAction = QAction("Speichern", self)
+        self.saveAction.triggered.connect(self.onSaveAction)
         self.saveAction.setShortcut("Ctrl+S")
 
         self.saveAsAction = QAction("Speichern unter ...", self)
+        self.saveAsAction.triggered.connect(self.onSaveAsAction)
 
         self.closeAction = QAction(u"Schließen", self)
         self.closeAction.triggered.connect(self.onCloseAction)
@@ -74,6 +79,40 @@ class MainWindow(QMainWindow):
 
     def onCloseAction(self):
         self.close()
+
+    def onSaveAction(self):
+        if not self.path:
+            return self.onSaveAsAction()
+
+        return True
+
+    def onSaveAsAction(self):
+        return True
+
+    def askClose(self):
+        if not self.modified:
+            return True
+
+        result = QMessageBox.question(
+            self,
+            u"Ungespeicherte Änderungen",
+            u"Ungespeicherte Änderungen gehen verloren. Möchten Sie die Datei vor dem Schließen speichern?",
+            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+
+        if result == QMessageBox.Save:
+            if not self.onSaveAction():
+                return False
+
+        if result == QMessageBox.Cancel:
+            return False
+
+        return True
+
+    def closeEvent(self, event):
+        if self.askClose():
+            event.accept()
+        else:
+            event.ignore()
 
 
 if __name__ == "__main__":
