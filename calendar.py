@@ -16,6 +16,7 @@ class Application(QApplication):
     def __init__(self, argv):
         super(Application, self).__init__(argv)
 
+
 class MainWindow(QMainWindow):
 
     def __init__(self, app):
@@ -37,7 +38,8 @@ class MainWindow(QMainWindow):
 
         self.saveAsAction = QAction("Speichern unter ...", self)
 
-        self.closeAction = QAction("Schließen", self)
+        self.closeAction = QAction(u"Schließen", self)
+        self.closeAction.triggered.connect(self.onCloseAction)
 
         self.aboutAction = QAction(u"Über ...", self)
         self.aboutAction.triggered.connect(self.onAboutAction)
@@ -69,6 +71,9 @@ class MainWindow(QMainWindow):
 
     def onAboutQtAction(self):
         QMessageBox.aboutQt(self, "Kalender")
+
+    def onCloseAction(self):
+        self.close()
 
 
 if __name__ == "__main__":
