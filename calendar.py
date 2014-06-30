@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 __author__ = "Niklas Fiekas"
-__email__ = "niklas.fiekas@googlemail.com"
+__email__ = "niklas.fiekas@tu-clausthal.de"
 __version__ = "0.0.1"
 
 from PySide.QtCore import *
