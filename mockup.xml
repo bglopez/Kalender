@@ -1,0 +1,232 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="1212" measuredH="747" mockupW="1044" mockupH="688">
+  <controls>
+    <control controlID="36" controlTypeID="com.balsamiq.mockups::TitleWindow" x="168" y="59" w="1044" h="688" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <close>true</close>
+        <dragger>true</dragger>
+        <maximizeRestore>true</maximizeRestore>
+        <minimize>true</minimize>
+        <text>Kalender</text>
+      </controlProperties>
+    </control>
+    <control controlID="37" controlTypeID="com.balsamiq.mockups::MenuBar" x="168" y="81" w="1044" h="29" measuredW="198" measuredH="29" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Datei%2C%20Eintr%E4ge%2C%20Ansicht</text>
+      </controlProperties>
+    </control>
+    <control controlID="38" controlTypeID="com.balsamiq.mockups::DataGrid" x="176" y="176" w="1029" h="527" measuredW="423" measuredH="517" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <hLines>false</hLines>
+        <rowHeight>16</rowHeight>
+        <text>Jan%2C%20Feb%2C%20M%E4r%2C%20Apr%2C%20Mai%2C%20Jun%2C%20Jul%2C%20Aug%2C%20Sep%2C%20Okt%2C%20Nov%2C%20Dez%0A%201%20Mi%0A%202%20Do%0A%203%20Fr%0A%204%20Sa%0A%205%20So%0A%206%20...%0A%207%0A%208%0A%209%0A10%0A11%20Sa%0A12%20So%0A13%20...%0A14%0A15%0A16%0A17%0A18%0A19%0A20%0A21%0A22%0A23%0A24%0A25%0A26%0A27%0A28%0A29%0A30%0A31</text>
+        <vLines>true</vLines>
+      </controlProperties>
+    </control>
+    <control controlID="39" controlTypeID="com.balsamiq.mockups::Canvas" x="950" y="612" w="82" h="91" measuredW="100" measuredH="70" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.5</backgroundAlpha>
+        <borderStyle>none</borderStyle>
+        <color>7775663</color>
+      </controlProperties>
+    </control>
+    <control controlID="40" controlTypeID="com.balsamiq.mockups::Canvas" x="1032" y="195" w="82" h="126" measuredW="100" measuredH="70" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.5</backgroundAlpha>
+        <borderStyle>none</borderStyle>
+        <color>7775663</color>
+      </controlProperties>
+    </control>
+    <control controlID="41" controlTypeID="com.balsamiq.mockups::Label" x="1093" y="221" w="-1" h="-1" measuredW="21" measuredH="74" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Herbstferien</text>
+        <textOrientation>up</textOrientation>
+      </controlProperties>
+    </control>
+    <control controlID="42" controlTypeID="com.balsamiq.mockups::Label" x="1011" y="620" w="-1" h="-1" measuredW="21" measuredH="74" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Herbstferien</text>
+        <textOrientation>up</textOrientation>
+      </controlProperties>
+    </control>
+    <control controlID="43" controlTypeID="com.balsamiq.mockups::Canvas" x="557" y="321" w="29" h="35" measuredW="100" measuredH="70" zOrder="8" locked="false" isInGroup="-1">
+      <controlProperties>
+        <color>13369344</color>
+      </controlProperties>
+    </control>
+    <control controlID="44" controlTypeID="com.balsamiq.mockups::Canvas" x="778" y="275" w="22" h="161" measuredW="100" measuredH="70" zOrder="9" locked="false" isInGroup="-1">
+      <controlProperties>
+        <color>12554240</color>
+      </controlProperties>
+    </control>
+    <control controlID="45" controlTypeID="com.balsamiq.mockups::Canvas" x="800" y="260" w="29" h="35" measuredW="100" measuredH="70" zOrder="10" locked="false" isInGroup="-1">
+      <controlProperties>
+        <color>13369344</color>
+      </controlProperties>
+    </control>
+    <control controlID="46" controlTypeID="com.balsamiq.mockups::Canvas" x="379" y="558" w="69" h="35" measuredW="100" measuredH="70" zOrder="11" locked="false" isInGroup="-1">
+      <controlProperties>
+        <color>13369344</color>
+      </controlProperties>
+    </control>
+    <control controlID="47" controlTypeID="com.balsamiq.mockups::Canvas" x="637" y="401" w="29" h="35" measuredW="100" measuredH="70" zOrder="12" locked="false" isInGroup="-1">
+      <controlProperties>
+        <color>13369344</color>
+      </controlProperties>
+    </control>
+    <control controlID="48" controlTypeID="com.balsamiq.mockups::Canvas" x="666" y="640" w="24" h="37" measuredW="100" measuredH="70" zOrder="13" locked="false" isInGroup="-1">
+      <controlProperties>
+        <borderStyle>square</borderStyle>
+        <color>40463</color>
+      </controlProperties>
+    </control>
+    <control controlID="49" controlTypeID="com.balsamiq.mockups::Canvas" x="829" y="195" w="24" h="80" measuredW="100" measuredH="70" zOrder="14" locked="false" isInGroup="-1">
+      <controlProperties>
+        <borderStyle>square</borderStyle>
+        <color>40463</color>
+      </controlProperties>
+    </control>
+    <control controlID="50" controlTypeID="com.balsamiq.mockups::Canvas" x="1114" y="529" w="91" h="174" measuredW="100" measuredH="70" zOrder="15" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.5</backgroundAlpha>
+        <borderStyle>none</borderStyle>
+        <color>7775663</color>
+      </controlProperties>
+    </control>
+    <control controlID="51" controlTypeID="com.balsamiq.mockups::Label" x="1184" y="566" w="-1" h="-1" measuredW="21" measuredH="101" zOrder="16" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Weihnachtsferien</text>
+        <textOrientation>up</textOrientation>
+      </controlProperties>
+    </control>
+    <control controlID="52" controlTypeID="com.balsamiq.mockups::PointyButton" x="955" y="125" w="-1" h="-1" measuredW="73" measuredH="27" zOrder="17" locked="false" isInGroup="-1">
+      <controlProperties>
+        <borderStyle>none</borderStyle>
+        <direction>left</direction>
+        <newLayout>true</newLayout>
+        <text>Zur%FCck</text>
+      </controlProperties>
+    </control>
+    <control controlID="53" controlTypeID="com.balsamiq.mockups::PointyButton" x="1134" y="125" w="-1" h="-1" measuredW="50" measuredH="27" zOrder="18" locked="false" isInGroup="-1">
+      <controlProperties>
+        <borderStyle>none</borderStyle>
+        <direction>right</direction>
+        <newLayout>true</newLayout>
+        <text>Vor</text>
+      </controlProperties>
+    </control>
+    <control controlID="54" controlTypeID="com.balsamiq.mockups::Title" x="1038" y="117" w="-1" h="-1" measuredW="92" measuredH="43" zOrder="19" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>2014</text>
+      </controlProperties>
+    </control>
+    <control controlID="55" controlTypeID="com.balsamiq.mockups::Button" x="176" y="125" w="-1" h="-1" measuredW="131" measuredH="27" zOrder="20" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>CircledPlusIcon%7Csmall</icon>
+        <text>Neuer%20Eintrag</text>
+      </controlProperties>
+    </control>
+    <control controlID="56" controlTypeID="com.balsamiq.mockups::Tooltip" x="675" y="578" w="194" h="76" measuredW="200" measuredH="76" zOrder="21" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Urlaub%20Niklas%0ASa%2028.06.14%20-%20Mo%2030.06.14</text>
+        <tooltipDirection>SW</tooltipDirection>
+      </controlProperties>
+    </control>
+    <control controlID="57" controlTypeID="com.balsamiq.mockups::Arrow" x="316" y="136" w="55" h="85" measuredW="150" measuredH="100" zOrder="22" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="58" controlTypeID="com.balsamiq.mockups::TitleWindow" x="230" y="233" w="321" h="210" measuredW="450" measuredH="400" zOrder="23" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bottomheight>0</bottomheight>
+        <dragger>false</dragger>
+        <text>Neuer%20Eintrag</text>
+      </controlProperties>
+    </control>
+    <control controlID="61" controlTypeID="com.balsamiq.mockups::ColorPicker" x="245" y="263" w="-1" h="-1" measuredW="26" measuredH="28" zOrder="24" locked="false" isInGroup="-1">
+      <controlProperties>
+        <color>13576743</color>
+      </controlProperties>
+    </control>
+    <control controlID="62" controlTypeID="com.balsamiq.mockups::DateChooser" x="251" y="356" w="-1" h="-1" measuredW="90" measuredH="25" zOrder="25" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>%20%20/%20%20/%20%20%20%20</text>
+      </controlProperties>
+    </control>
+    <control controlID="63" controlTypeID="com.balsamiq.mockups::DateChooser" x="427" y="356" w="-1" h="-1" measuredW="90" measuredH="25" zOrder="26" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>%20%20/%20%20/%20%20%20%20</text>
+      </controlProperties>
+    </control>
+    <control controlID="64" controlTypeID="com.balsamiq.mockups::Label" x="387" y="358" w="-1" h="-1" measuredW="18" measuredH="21" zOrder="27" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>bis</text>
+      </controlProperties>
+    </control>
+    <control controlID="65" controlTypeID="com.balsamiq.mockups::TextArea" x="284" y="262" w="258" h="82" measuredW="200" measuredH="140" zOrder="28" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Titel%0A%20%0AEvtl.%20weitere%20Notizen%0AUsw%2C%20usf.</text>
+      </controlProperties>
+    </control>
+    <control controlID="66" controlTypeID="com.balsamiq.mockups::Button" x="457" y="401" w="-1" h="-1" measuredW="85" measuredH="27" zOrder="29" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <text>Speichern</text>
+      </controlProperties>
+    </control>
+    <control controlID="67" controlTypeID="com.balsamiq.mockups::Button" x="363" y="401" w="-1" h="-1" measuredW="85" measuredH="27" zOrder="30" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Abbrechen</text>
+      </controlProperties>
+    </control>
+    <control controlID="68" controlTypeID="com.balsamiq.mockups::Canvas" x="860" y="195" w="90" h="157" measuredW="100" measuredH="70" zOrder="31" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.5</backgroundAlpha>
+        <borderStyle>none</borderStyle>
+        <color>7775663</color>
+      </controlProperties>
+    </control>
+    <control controlID="69" controlTypeID="com.balsamiq.mockups::Label" x="929" y="232" w="-1" h="-1" measuredW="21" measuredH="83" zOrder="32" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Sommerferien</text>
+        <textOrientation>up</textOrientation>
+      </controlProperties>
+    </control>
+    <control controlID="70" controlTypeID="com.balsamiq.mockups::Canvas" x="773" y="195" w="82" h="499" measuredW="100" measuredH="70" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.5</backgroundAlpha>
+        <borderStyle>none</borderStyle>
+        <color>7775663</color>
+      </controlProperties>
+    </control>
+    <control controlID="71" controlTypeID="com.balsamiq.mockups::Canvas" x="703" y="677" w="64" h="17" measuredW="100" measuredH="70" zOrder="33" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.5</backgroundAlpha>
+        <borderStyle>none</borderStyle>
+        <color>7775663</color>
+      </controlProperties>
+    </control>
+    <control controlID="72" controlTypeID="com.balsamiq.mockups::Label" x="839" y="413" w="-1" h="-1" measuredW="21" measuredH="83" zOrder="34" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Sommerferien</text>
+        <textOrientation>up</textOrientation>
+      </controlProperties>
+    </control>
+    <control controlID="74" controlTypeID="com.balsamiq.mockups::CallOut" x="730" y="629" w="168" h="48" measuredW="168" measuredH="39" zOrder="35" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Wird%20beim%20%DCberfahren%0Amit%20der%20Maus%20angezeigt</text>
+      </controlProperties>
+    </control>
+    <control controlID="76" controlTypeID="com.balsamiq.mockups::CallOut" x="387" y="117" w="159" h="68" measuredW="338" measuredH="40" zOrder="36" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Button%20verwenden%20oder%20Tage%20im%20Kalender%20ausw%E4hlen</text>
+      </controlProperties>
+    </control>
+    <control controlID="77" controlTypeID="com.balsamiq.mockups::Canvas" x="618" y="275" w="85" h="20" measuredW="100" measuredH="70" zOrder="37" locked="false" isInGroup="-1">
+      <controlProperties>
+        <borderColor>13576743</borderColor>
+        <borderStyle>square</borderStyle>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>
