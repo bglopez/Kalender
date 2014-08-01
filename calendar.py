@@ -8,6 +8,7 @@ __version__ = "0.0.1"
 from PySide.QtCore import *
 from PySide.QtGui import *
 
+import datetime
 import sys
 
 
@@ -15,6 +16,9 @@ class Application(QApplication):
 
     def __init__(self, argv):
         super(Application, self).__init__(argv)
+
+        self.white = QColor(255, 255, 255)
+        self.black = QColor(0, 0, 0)
 
 
 class MainWindow(QMainWindow):
@@ -25,11 +29,12 @@ class MainWindow(QMainWindow):
 
         self.initActions()
         self.initMenu()
+        self.initWidget()
 
         self.setWindowTitle("Kalender")
 
         self.modified = True
-        self.path = None
+        self.path = "test.json"
 
     def initActions(self):
         self.newAction = QAction("Neu", self)
@@ -66,6 +71,10 @@ class MainWindow(QMainWindow):
         infoMenu = self.menuBar().addMenu("Info")
         infoMenu.addAction(self.aboutAction)
         infoMenu.addAction(self.aboutQtAction)
+
+    def initWidget(self):
+        self.calendar = CalendarWidget(self.app, self)
+        self.setCentralWidget(self.calendar)
 
     def onAboutAction(self):
         QMessageBox.about(
@@ -116,6 +125,36 @@ class MainWindow(QMainWindow):
             event.accept()
         else:
             event.ignore()
+
+
+class CalendarWidget(QWidget):
+
+    def __init__(self, app, parent=None):
+        super(CalendarWidget, self).__init__(parent)
+        self.app = app
+
+        self.offset = 0
+
+    def columnWidth(self):
+        return max(min(self.width() / 12.0, 40.0), 100.0)
+
+    def visibleMonths(self):
+        start = int(self.offset)
+        end = int(self.offset + self.width() / self.columnWidth() + 1)
+
+        for month in xrange(start, end):
+            x = (month - self.offset) * self.columnWidth()
+            yield x, month
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+
+        # Fill background.
+        painter.fillRect(self.rect(), QBrush(self.app.white))
+
+        for x, month in self.visibleMonths():
+            painter.drawRect(QRect(x, 0, self.columnWidth(), self.height()))
+
 
 
 if __name__ == "__main__":
