@@ -63,6 +63,7 @@ class Application(QApplication):
         self.gray = QColor(191, 191, 191)
         self.shadow = QColor(0, 0, 0, 50)
         self.light = QColor(255, 255, 255, 200)
+        self.red = QColor(255, 0, 0)
 
 
 class MainWindow(QMainWindow):
@@ -258,7 +259,11 @@ class CalendarWidget(QWidget):
             painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)))
             painter.restore()
 
-        self.drawRaisedRect(painter, QRect(self.columnWidth() * 3, 40 + 20 + 18 * self.rowHeight(), self.columnWidth(), self.rowHeight()), QColor(255, 0, 0))
+        # Mark current day.
+        now = datetime.date.today()
+        month = (now.year - 1900) * 12 + now.month - 1
+        x = (month - self.offset) * self.columnWidth()
+        self.drawRaisedRect(painter, QRect(x, 40 + 20 + (now.day - 1) * self.rowHeight(), self.columnWidth(), self.rowHeight()), self.app.red)
 
     def drawRaisedRect(self, painter, rect, color):
         # Draw rect.
