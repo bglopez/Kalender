@@ -14,6 +14,8 @@ import sys
 MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
                "August", "September", "November", "Oktober", "Dezember"]
 
+WEEKDAY_NAMES = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag",
+                 "Freitag", "Samstag", "Sonntag"]
 
 GOLDEN_RATIO_CONJUGATE = 0.618033988749895
 
@@ -354,10 +356,12 @@ class CalendarWidget(QWidget):
 
             painter.save()
             for day in range(1, days_of_month(month) + 1):
+                date = qdate(month, day)
+
                 # Draw horizontal lines.
                 yStart = 40 + 20 + (day - 1) * self.rowHeight()
                 yEnd = yStart + self.rowHeight()
-                if qdate(month, day).dayOfWeek() == 7:
+                if date.dayOfWeek() == 7:
                     painter.setPen(QPen(self.app.gray, 2))
                 else:
                     painter.setPen(QPen(self.app.gray))
@@ -373,8 +377,14 @@ class CalendarWidget(QWidget):
                     font = self.font()
                     font.setPointSizeF(min(self.rowHeight() * 0.6, font.pointSizeF()))
                     painter.setFont(font)
-                    painter.drawText(QRect(x, yStart, min(self.rowHeight() / 20.0, 1.0) * 25, self.rowHeight()),
-                        Qt.AlignVCenter | Qt.AlignRight, str(day))
+                    xAlign = min(self.rowHeight() / 20.0, 1.0) * 25
+                    painter.drawText(QRect(x, yStart, xAlign, self.rowHeight()), Qt.AlignVCenter | Qt.AlignRight, str(day))
+
+                    # Draw weekday names.
+                    if self.columnWidth() > 120:
+                        painter.drawText(QRect(x + xAlign + 10, yStart, self.columnWidth() - xAlign - 10, self.rowHeight()), Qt.AlignVCenter, WEEKDAY_NAMES[date.dayOfWeek()])
+                    elif self.columnWidth() > 70:
+                        painter.drawText(QRect(x + xAlign + 10, yStart, self.columnWidth() - xAlign - 10, self.rowHeight()), Qt.AlignVCenter, WEEKDAY_NAMES[date.dayOfWeek()][:2])
 
             painter.restore()
 
