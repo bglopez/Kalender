@@ -286,6 +286,11 @@ class FerienNiedersachsen(HolidayOverlay):
         return match
 
 
+class VariantAnimation(QVariantAnimation):
+    def updateCurrentValue(self, value):
+        pass
+
+
 MOUSE_DOWN_NONE = 0
 MOUSE_DOWN_MONTH = 1
 MOUSE_DOWN_DAY = 2
@@ -299,7 +304,9 @@ class CalendarWidget(QWidget):
 
         self.setFocusPolicy(Qt.StrongFocus)
 
-        self.offset = 1368
+        self.targetOffset = (QDate.currentDate().year() - 1900) * 12
+        self.offset = self.targetOffset
+
         self.overlays = [
                 FerienNiedersachsen(self.app),
                 HolidayOverlay(self.app),
@@ -309,6 +316,41 @@ class CalendarWidget(QWidget):
         self.selection_end = QDate.currentDate()
         self.selection_start = self.selection_end
         self.mouse_down = MOUSE_DOWN_NONE
+
+        self.animation = VariantAnimation(self)
+        self.animation.setEasingCurve(QEasingCurve(QEasingCurve.InOutQuad))
+        self.animation.valueChanged.connect(self.onAnimate)
+        self.animation.setDuration(1000)
+        self.animationEnabled = False
+
+    def onLeftClicked(self):
+        self.animationEnabled = False
+
+        self.targetOffset -= 12
+
+        self.animation.setStartValue(self.offset)
+        self.animation.setEndValue(self.targetOffset)
+        self.animation.start()
+
+        self.animationEnabled = True
+
+    def onRightClicked(self):
+        self.animationEnabled = False
+
+        self.targetOffset += 12
+
+        self.animation.setStartValue(self.offset)
+        self.animation.setEndValue(self.targetOffset)
+        self.animation.start()
+
+        self.animationEnabled = True
+
+    def onAnimate(self, value):
+        if not self.animationEnabled:
+            return
+
+        self.offset = value
+        self.repaint()
 
     def inSelection(self, date):
         start = min(self.selection_start, self.selection_end)
@@ -511,6 +553,7 @@ class CalendarWidget(QWidget):
 
     def keyPressEvent(self, event):
         if event.key() in (Qt.Key_Down, Qt.Key_Up, Qt.Key_Left, Qt.Key_Right):
+            # Move selection end.
             if event.key() == Qt.Key_Down:
                 self.selection_end = self.selection_end.addDays(1)
             elif event.key() == Qt.Key_Up:
@@ -520,8 +563,16 @@ class CalendarWidget(QWidget):
             elif event.key() == Qt.Key_Right:
                 self.selection_end = self.selection_end.addMonths(1)
 
+            # Also move selection start, unless modifier pressed.
             if not (event.modifiers() & Qt.ShiftModifier):
                 self.selection_start = self.selection_end
+
+            # Scroll into view.
+            while self.selection_end < qdate(self.targetOffset, 1):
+                self.onLeftClicked()
+            while self.selection_end > qdate(self.targetOffset + 11, days_of_month(self.targetOffset + 11)):
+                self.onRightClicked()
+
             self.repaint()
 
         return super(CalendarWidget, self).keyPressEvent(event)
