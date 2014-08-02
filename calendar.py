@@ -11,6 +11,9 @@ from PySide.QtGui import *
 import datetime
 import sys
 
+MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
+               "August", "September", "November", "Oktober", "Dezember"]
+
 
 class Application(QApplication):
 
@@ -164,8 +167,10 @@ class CalendarWidget(QWidget):
             opt = QStyleOptionHeader()
             opt.rect = QRect(x, 40, self.columnWidth(), 20)
             opt.textAlignment = Qt.AlignCenter
-            titles = ["Jan", "Feb", u"Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
-            opt.text = titles[month % 12]
+            if opt.rect.width() < 80:
+                opt.text = MONTH_NAMES[month % 12][:3]
+            else:
+                opt.text = MONTH_NAMES[month % 12]
             self.style().drawControl(QStyle.CE_Header, opt, painter, self)
 
 
