@@ -626,6 +626,9 @@ class CalendarWidget(QWidget):
             if 5 <= x <= 35:
                 self.mouse_down = MOUSE_DOWN_LEFT
                 self.update(QRect(0, 0, self.width(), 40))
+            if 40 <= x <= 70:
+                self.mouse_down = MOUSE_DOWN_RIGHT
+                self.update(QRect(0, 0, self.width(), 40))
         elif 40 < event.y() < 40 + 20:
             self.mouse_down = MOUSE_DOWN_MONTH
             if not event.modifiers() & Qt.ShiftModifier:
@@ -661,6 +664,7 @@ class CalendarWidget(QWidget):
         repaint = False
 
         if event.button() == Qt.RightButton:
+            # Handle right clicks.
             month = self.monthForX(event.x())
             date = qdate(month, self.dayForY(month, event.y()))
 
@@ -671,12 +675,16 @@ class CalendarWidget(QWidget):
 
             print "Right click!"
         else:
+            # Update the selection.
             self.mouseMoveEvent(event)
             repaint = True
 
+        # Handle button clicks.
         if self.mouse_down:
             if self.mouse_down == MOUSE_DOWN_LEFT:
                 self.onLeftClicked()
+            if self.mouse_down == MOUSE_DOWN_RIGHT:
+                self.onRightClicked()
 
             repaint = True
             self.mouse_down = MOUSE_DOWN_NONE
