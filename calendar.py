@@ -15,6 +15,9 @@ MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
                "August", "September", "November", "Oktober", "Dezember"]
 
 
+GOLDEN_RATIO_CONJUGATE = 0.618033988749895
+
+
 def is_leap_year(year):
     if year % 4 != 0:
         return False
@@ -252,6 +255,8 @@ class CalendarWidget(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setRenderHint(QPainter.TextAntialiasing)
 
         # Draw white background.
         for x, month in self.visibleMonths():
@@ -328,11 +333,45 @@ class CalendarWidget(QWidget):
                 painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)) - 1)
             painter.restore()
 
+        painter.save()
+        self.latest_range_offset = 0.0
+        self.drawRange(painter, 1368, 6, 1370, 12, QColor(0, 155, 0))
+        self.drawRange(painter, 1370, 7, 1370, 26, QColor(155, 155, 0))
+        self.drawRange(painter, 1372, 20, 1372, 20, QColor(0, 0, 155))
+        self.drawRange(painter, 1375, 15, 1375, 21, QColor(0, 155, 155))
+        painter.restore()
+
         # Mark current day.
         now = datetime.date.today()
         month = (now.year - 1900) * 12 + now.month - 1
         x = (month - self.offset) * self.columnWidth()
         self.drawRaisedRect(painter, QRect(x, 40 + 20 + (now.day - 1) * self.rowHeight(), self.columnWidth(), self.rowHeight()), self.app.red)
+
+    def drawRange(self, painter, from_month, from_day, to_month, to_day, color):
+        self.latest_range_offset += GOLDEN_RATIO_CONJUGATE
+        self.latest_range_offset %= 1
+
+        radius = max(6, min(self.rowHeight() * 0.5, self.columnWidth() * 0.25) - 2)
+
+        painter.setBrush(QBrush(color))
+        painter.setPen(QPen(color, max(2.0, radius * 0.8)))
+
+        from_y = 40 + 20 + self.rowHeight() * (from_day - 0.5)
+        to_y = 40 + 20 + self.rowHeight() * (to_day - 0.5)
+
+        for month in range(from_month, to_month + 1):
+            x = (month - self.offset) * self.columnWidth() + self.columnWidth() * self.latest_range_offset
+
+            if month == from_month:
+                painter.drawEllipse(QPoint(x, from_y), radius, radius)
+                painter.drawLine(x, from_y, x, to_y if month == to_month else self.height())
+
+            if month == to_month:
+                painter.drawEllipse(QPoint(x, to_y), radius, radius)
+                painter.drawLine(x, from_y if month == from_month else 0, x, to_y)
+
+            if month != to_month and month != from_month:
+                painter.drawLine(x, 0, x, self.height())
 
     def drawRaisedRect(self, painter, rect, color):
         # Draw rect.
