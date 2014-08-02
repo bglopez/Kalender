@@ -299,6 +299,14 @@ class CalendarWidget(QWidget):
                 SundayOverlay(self.app),
             ]
 
+        self.selection_end = QDate.currentDate().addDays(-2)
+        self.selection_start = QDate.currentDate().addDays(7)
+
+    def inSelection(self, date):
+        start = min(self.selection_start, self.selection_end)
+        end = max(self.selection_start, self.selection_end)
+        return start <= date <= end
+
     def columnWidth(self):
         return min(max(self.width() / 12.0, 40.0), 125.0)
 
@@ -371,6 +379,15 @@ class CalendarWidget(QWidget):
                 for overlay in self.overlays:
                     if overlay.matches(month, day):
                         overlay.draw(painter, QRect(x, yStart, self.columnWidth() + 1, self.rowHeight() + 1))
+
+                # Draw selection.
+                if self.inSelection(date):
+                    painter.fillRect(QRect(x, yStart, self.columnWidth() + 1, self.rowHeight() + 1), QColor(91, 91, 255, 50))
+
+                # Draw selection end.
+                if date == self.selection_end:
+                    painter.setPen(QPen(QColor(91, 91, 255), 2))
+                    painter.drawRect(QRect(x, yStart, self.columnWidth(), self.rowHeight()))
 
                 # Draw day numbers.
                 if self.rowHeight() > 22 or day % 2 == 0:
