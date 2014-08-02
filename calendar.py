@@ -136,10 +136,10 @@ class CalendarWidget(QWidget):
         self.offset = 0
 
     def columnWidth(self):
-        return max(min(self.width() / 12.0, 40.0), 100.0)
+        return min(max(self.width() / 12.0, 40.0), 120.0)
 
     def visibleMonths(self):
-        start = int(self.offset)
+        start = int(self.offset) - 13
         end = int(self.offset + self.width() / self.columnWidth() + 1)
 
         for month in xrange(start, end):
@@ -153,8 +153,20 @@ class CalendarWidget(QWidget):
         painter.fillRect(self.rect(), QBrush(self.app.white))
 
         for x, month in self.visibleMonths():
-            painter.drawRect(QRect(x, 0, self.columnWidth(), self.height()))
+            # Draw year header.
+            if month % 12 == 0:
+                opt = QStyleOptionHeader()
+                opt.rect = QRect(x, 0, self.columnWidth() * 12, 40)
+                self.style().drawControl(QStyle.CE_Header, opt, painter, self)
+                #painter.drawText(yearHeaderRect, Qt.AlignCenter, str(1900 + month // 12))
 
+            # Draw header.
+            opt = QStyleOptionHeader()
+            opt.rect = QRect(x, 40, self.columnWidth(), 20)
+            opt.textAlignment = Qt.AlignCenter
+            titles = ["Jan", "Feb", u"Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
+            opt.text = titles[month % 12]
+            self.style().drawControl(QStyle.CE_Header, opt, painter, self)
 
 
 if __name__ == "__main__":
