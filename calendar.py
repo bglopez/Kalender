@@ -643,6 +643,9 @@ class CalendarWidget(QWidget):
         self.mouseMoveEvent(event)
         self.repaint()
 
+    def sizeHint(self):
+        return QSize(40 * 12, 40 + 20 + 10 * 31 + 10)
+
 
 if __name__ == "__main__":
     app = Application(sys.argv)
