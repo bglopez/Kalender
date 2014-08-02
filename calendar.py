@@ -703,12 +703,14 @@ class CalendarWidget(QWidget):
 
         # Handle button clicks.
         if self.mouse_down:
-            if self.mouse_down == MOUSE_DOWN_LEFT:
-                self.onLeftClicked()
-            elif self.mouse_down == MOUSE_DOWN_TODAY:
-                self.onTodayClicked()
-            elif self.mouse_down == MOUSE_DOWN_RIGHT:
-                self.onRightClicked()
+            if 5 <= event.y() <= 35:
+                x = (event.x() - self.offset * self.columnWidth) % (self.columnWidth * 12)
+                if 5 <= x <= 35 and self.mouse_down == MOUSE_DOWN_LEFT:
+                    self.onLeftClicked()
+                elif 40 <= x <= 70 and self.mouse_down == MOUSE_DOWN_TODAY:
+                    self.onTodayClicked()
+                elif 75 <= x <= 105 and self.mouse_down == MOUSE_DOWN_RIGHT:
+                    self.onRightClicked()
 
             repaint = True
             self.mouse_down = MOUSE_DOWN_NONE
