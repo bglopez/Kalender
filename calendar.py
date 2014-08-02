@@ -15,6 +15,44 @@ MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
                "August", "September", "November", "Oktober", "Dezember"]
 
 
+def is_leap_year(year):
+    if year % 4 != 0:
+        return False
+    elif year % 100 != 0:
+        return True
+    elif year % 400 != 0:
+        return False
+    else:
+        return True
+
+def days_of_month(month):
+    year = 1900 + month // 12
+    if month % 12 == 0:
+        return 31
+    elif month % 12 == 1:
+        return 29 if is_leap_year(year) else 28
+    elif month % 12 == 2:
+        return 31
+    elif month % 12 == 3:
+        return 30
+    elif month % 12 == 4:
+        return 31
+    elif month % 12 == 5:
+        return 30
+    elif month % 12 == 6:
+        return 31
+    elif month % 12 == 7:
+        return 31
+    elif month % 12 == 8:
+        return 30
+    elif month % 12 == 9:
+        return 31
+    elif month % 12 == 10:
+        return 30
+    else:
+        return 31
+
+
 class Application(QApplication):
 
     def __init__(self, argv):
@@ -22,6 +60,7 @@ class Application(QApplication):
 
         self.white = QColor(255, 255, 255)
         self.black = QColor(0, 0, 0)
+        self.gray = QColor(191, 191, 191)
 
 
 class MainWindow(QMainWindow):
@@ -139,7 +178,10 @@ class CalendarWidget(QWidget):
         self.offset = 0
 
     def columnWidth(self):
-        return min(max(self.width() / 12.0, 40.0), 120.0)
+        return min(max(self.width() / 12.0, 40.0), 125.0)
+
+    def rowHeight(self):
+        return max((self.height() - 40 - 20 - 10) / 31.0, 10.0)
 
     def visibleMonths(self):
         start = int(self.offset) - 13
@@ -152,8 +194,9 @@ class CalendarWidget(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
 
-        # Fill background.
-        painter.fillRect(self.rect(), QBrush(self.app.white))
+        # Draw white background.
+        for x, month in self.visibleMonths():
+            painter.fillRect(QRect(x, 40 + 20, self.columnWidth(), days_of_month(month) * self.rowHeight()), QBrush(self.app.white))
 
         for x, month in self.visibleMonths():
             # Draw year header.
@@ -166,6 +209,7 @@ class CalendarWidget(QWidget):
 
                 # Draw title text.
                 painter.save()
+                painter.setPen(QPen())
                 font = self.font()
                 font.setPointSizeF(font.pointSizeF() * 1.2)
                 font.setBold(True)
@@ -184,6 +228,23 @@ class CalendarWidget(QWidget):
             else:
                 opt.text = MONTH_NAMES[month % 12]
             self.style().drawControl(QStyle.CE_Header, opt, painter, self)
+            painter.restore()
+
+            # Draw horizontal lines.
+            painter.save()
+            painter.setPen(QPen(self.app.gray))
+            for day in range(0, days_of_month(month)):
+                y = 40 + 20 + day * self.rowHeight()
+                painter.drawLine(x, y + self.rowHeight(), x + self.columnWidth(), y + self.rowHeight())
+            painter.restore()
+
+            # Draw vertical lines.
+            painter.save()
+            if month % 12 == 0:
+                painter.setPen(QPen(self.app.gray, 2))
+            else:
+                painter.setPen(QPen(self.app.gray))
+            painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)))
             painter.restore()
 
 
