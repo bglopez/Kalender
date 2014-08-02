@@ -62,6 +62,7 @@ class Application(QApplication):
         self.black = QColor(0, 0, 0)
         self.gray = QColor(191, 191, 191)
         self.shadow = QColor(0, 0, 0, 50)
+        self.light = QColor(255, 255, 255, 200)
 
 
 class MainWindow(QMainWindow):
@@ -257,7 +258,7 @@ class CalendarWidget(QWidget):
             painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)))
             painter.restore()
 
-        self.drawRaisedRect(painter, QRect(200, 100, 120, 35), QColor(255, 0, 0))
+        self.drawRaisedRect(painter, QRect(self.columnWidth() * 3, 40 + 20 + 18 * self.rowHeight(), self.columnWidth(), self.rowHeight()), QColor(255, 0, 0))
 
     def drawRaisedRect(self, painter, rect, color):
         # Draw rect.
@@ -266,15 +267,14 @@ class CalendarWidget(QWidget):
         painter.setPen(pen)
         painter.drawRect(rect)
 
-        painter.setPen(QPen(self.app.shadow, 3))
-
         # Draw inner shadow.
+        painter.setPen(QPen(self.app.shadow, 3))
         painter.drawLine(
             rect.x() + 6, rect.y() + 3,
-            rect.x() + rect.width() - 3, rect.y() + 3)
+            rect.x() + rect.width() - 4, rect.y() + 3)
         painter.drawLine(
             rect.x() + 3, rect.y() + 3,
-            rect.x() + 3, rect.y() + rect.height() - 3)
+            rect.x() + 3, rect.y() + rect.height() - 4)
 
         # Draw outer shadow.
         painter.drawLine(
@@ -283,6 +283,24 @@ class CalendarWidget(QWidget):
         painter.drawLine(
             rect.x() + rect.width() + 3, rect.y() + 3,
             rect.x() + rect.width() + 3, rect.y() + rect.height())
+
+        # Draw highlight.
+        painter.setPen(QPen(self.app.light, 1))
+        painter.drawLine(
+            rect.x() - 2, rect.y() - 2,
+            rect.x() + rect.width() + 1, rect.y() -2)
+        painter.drawLine(
+            rect.x() - 2, rect.y() - 2,
+            rect.x() - 2, rect.y() + rect.height() + 1)
+
+        # Draw highlight shadow.
+        painter.setPen(QPen(self.app.shadow, 1))
+        painter.drawLine(
+            rect.x() - 2, rect.y() + rect.height() + 1,
+            rect.x() + rect.width() + 1, rect.y() + rect.height() + 1)
+        painter.drawLine(
+            rect.x() + rect.width() + 1, rect.y() - 2,
+            rect.x() + rect.width() + 1, rect.y() + rect.height() + 1)
 
 
 if __name__ == "__main__":
