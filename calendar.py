@@ -84,7 +84,8 @@ HOLIDAY_SUNDAY = 256
 def is_holiday(month, day):
     holiday = HOLIDAY_NONE
 
-    easter = easter_sunday(1900 + month // 12)
+    easter_month, easter_day = easter_sunday(1900 + month // 12)
+    easter = qdate(easter_month, easter_day)
     date = qdate(month, day)
 
     if date.dayOfWeek() == 7:
@@ -231,6 +232,21 @@ class MainWindow(QMainWindow):
             event.ignore()
 
 
+class HolidayOverlay(object):
+    def __init__(self, app):
+        self.brush = QBrush(app.lightRed)
+
+    def matches(self, month, day):
+        return is_holiday(month, day) &~ HOLIDAY_SUNDAY
+
+    def draw(self, painter, rect):
+        painter.fillRect(rect, self.brush)
+
+class SundayOverlay(HolidayOverlay):
+    def matches(self, month, day):
+        return is_holiday(month, day) & HOLIDAY_SUNDAY
+
+
 class CalendarWidget(QWidget):
 
     def __init__(self, app, parent=None):
@@ -238,6 +254,10 @@ class CalendarWidget(QWidget):
         self.app = app
 
         self.offset = 1368
+        self.overlays = [
+                HolidayOverlay(self.app),
+                SundayOverlay(self.app)
+            ]
 
     def columnWidth(self):
         return min(max(self.width() / 12.0, 40.0), 125.0)
@@ -305,9 +325,10 @@ class CalendarWidget(QWidget):
                     painter.setPen(QPen(self.app.gray))
                 painter.drawLine(x + 1, yEnd, x + self.columnWidth(), yEnd)
 
-                # Mark holidays.
-                if is_holiday(month, day):
-                    painter.fillRect(QRect(x, yStart, self.columnWidth() + 1, self.rowHeight() + 1), QBrush(self.app.lightRed))
+                # Draw overlays.
+                for overlay in self.overlays:
+                    if overlay.matches(month, day):
+                        overlay.draw(painter, QRect(x, yStart, self.columnWidth() + 1, self.rowHeight() + 1))
 
                 # Draw day numbers.
                 if self.rowHeight() > 22 or day % 2 == 0:
