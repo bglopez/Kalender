@@ -137,6 +137,8 @@ class Application(QApplication):
         self.leftDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "left-down.png"))
         self.rightPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "right.png"))
         self.rightDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "right-down.png"))
+        self.todayPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "today.png"))
+        self.todayDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "today-down.png"))
 
 
 class MainWindow(QMainWindow):
@@ -302,7 +304,7 @@ MOUSE_DOWN_MONTH = 1
 MOUSE_DOWN_DAY = 2
 MOUSE_DOWN_LEFT = 3
 MOUSE_DOWN_RIGHT = 4
-
+MOUSE_DOWN_TODAY = 5
 
 class CalendarWidget(QWidget):
 
@@ -345,6 +347,17 @@ class CalendarWidget(QWidget):
         self.animationEnabled = False
 
         self.targetOffset += 12
+
+        self.animation.setStartValue(self.offset)
+        self.animation.setEndValue(self.targetOffset)
+        self.animation.start()
+
+        self.animationEnabled = True
+
+    def onTodayClicked(self):
+        self.animationEnabled = False
+
+        self.targetOffset = float((QDate.currentDate().year() - 1900) * 12)
 
         self.animation.setStartValue(self.offset)
         self.animation.setEndValue(self.targetOffset)
@@ -406,11 +419,17 @@ class CalendarWidget(QWidget):
                 else:
                     painter.drawPixmap(QRect(x + 5, 5, 30, 30), self.app.leftPixmap, QRect(0, 0, 30, 30))
 
+                # Draw today button.
+                if self.mouse_down == MOUSE_DOWN_TODAY:
+                    painter.drawPixmap(QRect(x + 40, 5, 30, 30), self.app.todayDownPixmap, QRect(0, 0, 30, 30))
+                else:
+                    painter.drawPixmap(QRect(x + 40, 5, 30, 30), self.app.todayPixmap, QRect(0, 0, 30, 30))
+
                 # Draw right button.
                 if self.mouse_down == MOUSE_DOWN_RIGHT:
-                    painter.drawPixmap(QRect(x + 40, 5, 30, 30), self.app.rightDownPixmap, QRect(0, 0, 30, 30))
+                    painter.drawPixmap(QRect(x + 75, 5, 30, 30), self.app.rightDownPixmap, QRect(0, 0, 30, 30))
                 else:
-                    painter.drawPixmap(QRect(x + 40, 5, 30, 30), self.app.rightPixmap, QRect(0, 0, 30, 30))
+                    painter.drawPixmap(QRect(x + 75, 5, 30, 30), self.app.rightPixmap, QRect(0, 0, 30, 30))
 
                 # Draw title text.
                 painter.save()
@@ -419,7 +438,7 @@ class CalendarWidget(QWidget):
                 font.setPointSizeF(font.pointSizeF() * 1.2)
                 font.setBold(True)
                 painter.setFont(font)
-                painter.drawText(QRect(x + 80, 0, self.columnWidth * 12 - 32 * 2, 40),
+                painter.drawText(QRect(x + 120, 0, self.columnWidth * 12 - 32 * 2, 40),
                     Qt.AlignVCenter, str(1900 + month // 12))
                 painter.restore()
 
@@ -627,6 +646,9 @@ class CalendarWidget(QWidget):
                 self.mouse_down = MOUSE_DOWN_LEFT
                 self.update(QRect(0, 0, self.width(), 40))
             if 40 <= x <= 70:
+                self.mouse_down = MOUSE_DOWN_TODAY
+                self.update(QRect(0, 0, self.width(), 40))
+            if 75 <= x <= 105:
                 self.mouse_down = MOUSE_DOWN_RIGHT
                 self.update(QRect(0, 0, self.width(), 40))
         elif 40 < event.y() < 40 + 20:
@@ -683,7 +705,9 @@ class CalendarWidget(QWidget):
         if self.mouse_down:
             if self.mouse_down == MOUSE_DOWN_LEFT:
                 self.onLeftClicked()
-            if self.mouse_down == MOUSE_DOWN_RIGHT:
+            elif self.mouse_down == MOUSE_DOWN_TODAY:
+                self.onTodayClicked()
+            elif self.mouse_down == MOUSE_DOWN_RIGHT:
                 self.onRightClicked()
 
             repaint = True
