@@ -299,7 +299,7 @@ class CalendarWidget(QWidget):
 
         self.setFocusPolicy(Qt.StrongFocus)
 
-        self.targetOffset = (QDate.currentDate().year() - 1900) * 12
+        self.targetOffset = float(QDate.currentDate().year() - 1900) * 12
         self.offset = self.targetOffset
 
         self.overlays = [
