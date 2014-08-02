@@ -286,6 +286,11 @@ class FerienNiedersachsen(HolidayOverlay):
         return match
 
 
+MOUSE_DOWN_NONE = 0
+MOUSE_DOWN_MONTH = 1
+MOUSE_DOWN_DAY = 2
+
+
 class CalendarWidget(QWidget):
 
     def __init__(self, app, parent=None):
@@ -303,6 +308,7 @@ class CalendarWidget(QWidget):
 
         self.selection_end = QDate.currentDate()
         self.selection_start = self.selection_end
+        self.mouse_down = MOUSE_DOWN_NONE
 
     def inSelection(self, date):
         start = min(self.selection_start, self.selection_end)
@@ -519,6 +525,47 @@ class CalendarWidget(QWidget):
             self.repaint()
 
         return super(CalendarWidget, self).keyPressEvent(event)
+
+    def monthForX(self, x):
+        return int(self.offset + x / self.columnWidth())
+
+    def dayForY(self, month, y):
+        return max(1, min((y - 40 - 20) // self.rowHeight() + 1, days_of_month(month)))
+
+    def mousePressEvent(self, event):
+        month = self.monthForX(event.x())
+
+        if 40 < event.y() < 40 + 20:
+            self.mouse_down = MOUSE_DOWN_MONTH
+            if not event.modifiers() & Qt.ShiftModifier:
+                self.selection_start = qdate(month, 1)
+            self.selection_end = qdate(month, days_of_month(month))
+            self.repaint()
+        elif 40 + 20 < event.y():
+            self.mouse_down = MOUSE_DOWN_DAY
+            self.selection_end = qdate(month, self.dayForY(month, event.y()))
+            if not event.modifiers() & Qt.ShiftModifier:
+                self.selection_start = self.selection_end
+        else:
+            self.mouse_down = MOUSE_DOWN_NONE
+
+        return super(CalendarWidget, self).mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        month = self.monthForX(event.x())
+
+        if 40 < event.y() < 40 + 20:
+            self.selection_end = qdate(month, days_of_month(month))
+            if not event.modifiers() & Qt.ShiftModifier and not self.mouse_down in (MOUSE_DOWN_MONTH, MOUSE_DOWN_DAY):
+                self.selection_start = qdate(month, 1)
+            self.update()
+        elif 40 + 20 < event.y():
+            self.selection_end = qdate(month, self.dayForY(month, event.y()))
+            self.update()
+
+    def mouseReleaseEvent(self, event):
+        self.mouseMoveEvent(event)
+        self.repaint()
 
 
 if __name__ == "__main__":
