@@ -52,6 +52,61 @@ def days_of_month(month):
     else:
         return 31
 
+def qdate(month, day):
+    return QDate(1900 + month // 12, month % 12 + 1, day)
+
+def easter_sunday(year):
+    g = year % 19
+    c = year / 100
+    h = (c - (c / 4) - ((9 * c + 13) / 25) + 19 * g + 15) % 30
+    i = h - (h / 28) * (1 - (h / 28) * (29 / (h + 1)) * ((21 - g) / 11))
+    day = i - ((year + (year / 4) + i + 2 - c + (c / 4)) % 7) + 28
+    if day > 31:
+        return (year - 1900) * 12 + 3, day - 31
+    else:
+        return (year - 1900) * 12 + 2, day
+
+
+HOLIDAY_NONE = 0
+HOLIDAY_NEWYEAR = 1
+HOLIDAY_GOOD_FRIDAY = 2
+HOLIDAY_EASTER_MONDAY = 4
+HOLIDAY_MAY_1 = 8
+HOLIDAY_ASCENSION = 16
+HOLIDAY_PENTECOST = 32
+HOLIDAY_TAG_DER_DEUTSCHEN_EINHEIT = 64
+HOLIDAY_CHRISTMAS = 128
+HOLIDAY_SUNDAY = 256
+
+def is_holiday(month, day):
+    holiday = HOLIDAY_NONE
+
+    easter = easter_sunday(1900 + month // 12)
+    date = qdate(month, day)
+
+    if date.dayOfWeek() == 7:
+        holiday |= HOLIDAY_SUNDAY
+
+    if date.addDays(2) == easter:
+        holiday |= HOLIDAY_GOOD_FRIDAY
+    elif date.addDays(-1) == easter:
+        holiday |= HOLIDAY_EASTER_MONDAY
+    elif date.addDays(-39) == easter:
+        holiday |= HOLIDAY_ASCENSION
+    elif date.addDays(-49) == easter:
+        holiday |= HOLIDAY_PENTECOST
+
+    if date.dayOfYear() == 1:
+        holiday |= HOLIDAY_NEWYEAR
+    elif date.month() == 5 and date.day() == 1:
+        holiday |= HOLIDAY_MAY_1
+    elif date.month() == 10 and date.day() == 3:
+        holiday |= HOLIDAY_TAG_DER_DEUTSCHEN_EINHEIT
+    elif date.month() == 12 and date.day() in (25, 26):
+        holiday |= HOLIDAY_CHRISTMAS
+
+    return holiday
+
 
 class Application(QApplication):
 
@@ -64,6 +119,7 @@ class Application(QApplication):
         self.shadow = QColor(0, 0, 0, 50)
         self.light = QColor(255, 255, 255, 200)
         self.red = QColor(255, 0, 0)
+        self.lightRed = QColor(242, 219, 219, 100)
 
 
 class MainWindow(QMainWindow):
@@ -241,6 +297,10 @@ class CalendarWidget(QWidget):
                 yEnd = yStart + self.rowHeight()
                 painter.drawLine(x, yEnd, x + self.columnWidth(), yEnd)
 
+                # Mark holidays.
+                if is_holiday(month, day):
+                    painter.fillRect(QRect(x, yStart, self.columnWidth() + 1, self.rowHeight() + 1), QBrush(self.app.lightRed))
+
                 # Draw day numbers.
                 if self.rowHeight() > 22 or day % 2 == 0:
                     font = self.font()
@@ -248,6 +308,7 @@ class CalendarWidget(QWidget):
                     painter.setFont(font)
                     painter.drawText(QRect(x, yStart, min(self.rowHeight() / 20.0, 1.0) * 30, self.rowHeight()),
                         Qt.AlignVCenter | Qt.AlignRight, str(day))
+
             painter.restore()
 
             # Draw vertical lines.
