@@ -357,19 +357,23 @@ class CalendarWidget(QWidget):
         end = max(self.selection_start, self.selection_end)
         return start <= date <= end
 
-    def columnWidth(self):
+    def calculateColumnWidth(self):
         return min(max(self.width() / 12.0, 40.0), 125.0)
 
-    def rowHeight(self):
+    def calculateRowHeight(self):
         return max((self.height() - 40 - 20 - 10) / 31.0, 10.0)
 
     def visibleMonths(self):
         start = int(self.offset) - 13
-        end = int(self.offset + self.width() / self.columnWidth() + 1)
+        end = int(self.offset + self.width() / self.columnWidth + 1)
 
         for month in xrange(start, end):
-            x = (month - self.offset) * self.columnWidth()
+            x = (month - self.offset) * self.columnWidth
             yield x, month
+
+    def resizeEvent(self, event):
+        self.rowHeight = self.calculateRowHeight()
+        self.columnWidth = self.calculateColumnWidth()
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -378,14 +382,14 @@ class CalendarWidget(QWidget):
 
         # Draw white background.
         for x, month in self.visibleMonths():
-            painter.fillRect(QRect(x, 40 + 20, self.columnWidth(), days_of_month(month) * self.rowHeight()), QBrush(self.app.white))
+            painter.fillRect(QRect(x, 40 + 20, self.columnWidth, days_of_month(month) * self.rowHeight), QBrush(self.app.white))
 
         for x, month in self.visibleMonths():
             # Draw year header.
             if month % 12 == 0:
                 painter.save()
                 opt = QStyleOptionHeader()
-                opt.rect = QRect(x, 0, self.columnWidth() * 12, 40)
+                opt.rect = QRect(x, 0, self.columnWidth * 12, 40)
                 self.style().drawControl(QStyle.CE_Header, opt, painter, self)
                 painter.restore()
 
@@ -396,14 +400,14 @@ class CalendarWidget(QWidget):
                 font.setPointSizeF(font.pointSizeF() * 1.2)
                 font.setBold(True)
                 painter.setFont(font)
-                painter.drawText(QRect(x + 32, 0, self.columnWidth() * 12 - 32 * 2, 40),
+                painter.drawText(QRect(x + 32, 0, self.columnWidth * 12 - 32 * 2, 40),
                     Qt.AlignVCenter, str(1900 + month // 12))
                 painter.restore()
 
             # Draw month header.
             painter.save()
             opt = QStyleOptionHeader()
-            opt.rect = QRect(x, 40, self.columnWidth(), 20)
+            opt.rect = QRect(x, 40, self.columnWidth, 20)
             opt.textAlignment = Qt.AlignCenter
             if opt.rect.width() < 80:
                 opt.text = MONTH_NAMES[month % 12][:3]
@@ -417,41 +421,41 @@ class CalendarWidget(QWidget):
                 date = qdate(month, day)
 
                 # Draw horizontal lines.
-                yStart = 40 + 20 + (day - 1) * self.rowHeight()
-                yEnd = yStart + self.rowHeight()
+                yStart = 40 + 20 + (day - 1) * self.rowHeight
+                yEnd = yStart + self.rowHeight
                 if date.dayOfWeek() == 7:
                     painter.setPen(QPen(self.app.gray, 2))
                 else:
                     painter.setPen(QPen(self.app.gray))
-                painter.drawLine(x + 1, yEnd, x + self.columnWidth(), yEnd)
+                painter.drawLine(x + 1, yEnd, x + self.columnWidth, yEnd)
 
                 # Draw overlays.
                 for overlay in self.overlays:
                     if overlay.matches(month, day):
-                        overlay.draw(painter, QRect(x, yStart, self.columnWidth() + 1, self.rowHeight() + 1))
+                        overlay.draw(painter, QRect(x, yStart, self.columnWidth + 1, self.rowHeight + 1))
 
                 # Draw selection.
                 if self.inSelection(date):
-                    painter.fillRect(QRect(x, yStart, self.columnWidth() + 1, self.rowHeight() + 1), QColor(91, 91, 255, 50))
+                    painter.fillRect(QRect(x, yStart, self.columnWidth + 1, self.rowHeight + 1), QColor(91, 91, 255, 50))
 
                 # Draw selection end.
                 if date == self.selection_end:
                     painter.setPen(QPen(QColor(30, 30, 200), 2))
-                    painter.drawRect(QRect(x + 2, yStart + 2, self.columnWidth() - 4, self.rowHeight() - 4))
+                    painter.drawRect(QRect(x + 2, yStart + 2, self.columnWidth - 4, self.rowHeight - 4))
 
                 # Draw day numbers.
-                if self.rowHeight() > 22 or day % 2 == 0:
+                if self.rowHeight > 22 or day % 2 == 0:
                     font = self.font()
-                    font.setPointSizeF(min(self.rowHeight() * 0.6, font.pointSizeF()))
+                    font.setPointSizeF(min(self.rowHeight * 0.6, font.pointSizeF()))
                     painter.setFont(font)
-                    xAlign = min(self.rowHeight() / 20.0, 1.0) * 25
-                    painter.drawText(QRect(x, yStart, xAlign, self.rowHeight()), Qt.AlignVCenter | Qt.AlignRight, str(day))
+                    xAlign = min(self.rowHeight / 20.0, 1.0) * 25
+                    painter.drawText(QRect(x, yStart, xAlign, self.rowHeight), Qt.AlignVCenter | Qt.AlignRight, str(day))
 
                     # Draw weekday names.
-                    if self.columnWidth() > 120:
-                        painter.drawText(QRect(x + xAlign + 10, yStart, self.columnWidth() - xAlign - 10, self.rowHeight()), Qt.AlignVCenter, WEEKDAY_NAMES[date.dayOfWeek()])
-                    elif self.columnWidth() > 70:
-                        painter.drawText(QRect(x + xAlign + 10, yStart, self.columnWidth() - xAlign - 10, self.rowHeight()), Qt.AlignVCenter, WEEKDAY_NAMES[date.dayOfWeek()][:2])
+                    if self.columnWidth > 120:
+                        painter.drawText(QRect(x + xAlign + 10, yStart, self.columnWidth - xAlign - 10, self.rowHeight), Qt.AlignVCenter, WEEKDAY_NAMES[date.dayOfWeek()])
+                    elif self.columnWidth > 70:
+                        painter.drawText(QRect(x + xAlign + 10, yStart, self.columnWidth - xAlign - 10, self.rowHeight), Qt.AlignVCenter, WEEKDAY_NAMES[date.dayOfWeek()][:2])
 
             painter.restore()
 
@@ -459,14 +463,14 @@ class CalendarWidget(QWidget):
             painter.save()
             if month % 12 == 0:
                 painter.setPen(QPen(self.app.gray))
-                painter.drawLine(x - 2, 0, x - 2, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)) - 1)
+                painter.drawLine(x - 2, 0, x - 2, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)) - 1)
                 painter.setPen(QPen(self.palette().window().color(), 2))
-                painter.drawLine(x, 0, x, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)))
+                painter.drawLine(x, 0, x, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)))
                 painter.setPen(QPen(self.app.gray))
-                painter.drawLine(x + 1, 0, x + 1, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)) - 1)
+                painter.drawLine(x + 1, 0, x + 1, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)) - 1)
             else:
                 painter.setPen(QPen(self.app.gray))
-                painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)) - 1)
+                painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)) - 1)
             painter.restore()
 
         painter.save()
@@ -480,23 +484,23 @@ class CalendarWidget(QWidget):
         # Mark current day.
         now = datetime.date.today()
         month = (now.year - 1900) * 12 + now.month - 1
-        x = (month - self.offset) * self.columnWidth()
-        self.drawRaisedRect(painter, QRect(x, 40 + 20 + (now.day - 1) * self.rowHeight(), self.columnWidth(), self.rowHeight()), self.app.red)
+        x = (month - self.offset) * self.columnWidth
+        self.drawRaisedRect(painter, QRect(x, 40 + 20 + (now.day - 1) * self.rowHeight, self.columnWidth, self.rowHeight), self.app.red)
 
     def drawRange(self, painter, from_month, from_day, to_month, to_day, color):
         self.latest_range_offset += GOLDEN_RATIO_CONJUGATE
         self.latest_range_offset %= 1
 
-        radius = max(6, min(self.rowHeight() * 0.5, self.columnWidth() * 0.25) - 2)
+        radius = max(6, min(self.rowHeight * 0.5, self.columnWidth * 0.25) - 2)
 
         painter.setBrush(QBrush(color))
         painter.setPen(QPen(color, max(2.0, radius * 0.8)))
 
-        from_y = 40 + 20 + self.rowHeight() * (from_day - 0.5)
-        to_y = 40 + 20 + self.rowHeight() * (to_day - 0.5)
+        from_y = 40 + 20 + self.rowHeight * (from_day - 0.5)
+        to_y = 40 + 20 + self.rowHeight * (to_day - 0.5)
 
         for month in range(from_month, to_month + 1):
-            x = (month - self.offset) * self.columnWidth() + self.columnWidth() * self.latest_range_offset
+            x = (month - self.offset) * self.columnWidth + self.columnWidth * self.latest_range_offset
 
             if month == from_month:
                 painter.drawEllipse(QPoint(x, from_y), radius, radius)
@@ -578,10 +582,10 @@ class CalendarWidget(QWidget):
         return super(CalendarWidget, self).keyPressEvent(event)
 
     def monthForX(self, x):
-        return int(self.offset + x / self.columnWidth())
+        return int(self.offset + x / self.columnWidth)
 
     def dayForY(self, month, y):
-        return max(1, min((y - 40 - 20) // self.rowHeight() + 1, days_of_month(month)))
+        return max(1, min((y - 40 - 20) // self.rowHeight + 1, days_of_month(month)))
 
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:
