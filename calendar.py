@@ -230,12 +230,21 @@ class CalendarWidget(QWidget):
             self.style().drawControl(QStyle.CE_Header, opt, painter, self)
             painter.restore()
 
-            # Draw horizontal lines.
             painter.save()
             painter.setPen(QPen(self.app.gray))
-            for day in range(0, days_of_month(month)):
-                y = 40 + 20 + day * self.rowHeight()
-                painter.drawLine(x, y + self.rowHeight(), x + self.columnWidth(), y + self.rowHeight())
+            for day in range(1, days_of_month(month) + 1):
+                # Draw horizontal lines.
+                yStart = 40 + 20 + (day - 1) * self.rowHeight()
+                yEnd = yStart + self.rowHeight()
+                painter.drawLine(x, yEnd, x + self.columnWidth(), yEnd)
+
+                # Draw day numbers.
+                if self.rowHeight() > 22 or day % 2 == 0:
+                    font = self.font()
+                    font.setPointSizeF(min(self.rowHeight() * 0.6, font.pointSizeF()))
+                    painter.setFont(font)
+                    painter.drawText(QRect(x, yStart, min(self.rowHeight() / 20.0, 1.0) * 30, self.rowHeight()),
+                        Qt.AlignVCenter | Qt.AlignRight, str(day))
             painter.restore()
 
             # Draw vertical lines.
