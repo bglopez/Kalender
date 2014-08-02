@@ -158,12 +158,24 @@ class CalendarWidget(QWidget):
         for x, month in self.visibleMonths():
             # Draw year header.
             if month % 12 == 0:
+                painter.save()
                 opt = QStyleOptionHeader()
                 opt.rect = QRect(x, 0, self.columnWidth() * 12, 40)
                 self.style().drawControl(QStyle.CE_Header, opt, painter, self)
-                #painter.drawText(yearHeaderRect, Qt.AlignCenter, str(1900 + month // 12))
+                painter.restore()
 
-            # Draw header.
+                # Draw title text.
+                painter.save()
+                font = self.font()
+                font.setPointSizeF(font.pointSizeF() * 1.2)
+                font.setBold(True)
+                painter.setFont(font)
+                painter.drawText(QRect(x + 32, 0, self.columnWidth() * 12 - 32 * 2, 40),
+                    Qt.AlignVCenter, str(1900 + month // 12))
+                painter.restore()
+
+            # Draw month header.
+            painter.save()
             opt = QStyleOptionHeader()
             opt.rect = QRect(x, 40, self.columnWidth(), 20)
             opt.textAlignment = Qt.AlignCenter
@@ -172,6 +184,7 @@ class CalendarWidget(QWidget):
             else:
                 opt.text = MONTH_NAMES[month % 12]
             self.style().drawControl(QStyle.CE_Header, opt, painter, self)
+            painter.restore()
 
 
 if __name__ == "__main__":
