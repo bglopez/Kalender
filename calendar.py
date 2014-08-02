@@ -61,6 +61,7 @@ class Application(QApplication):
         self.white = QColor(255, 255, 255)
         self.black = QColor(0, 0, 0)
         self.gray = QColor(191, 191, 191)
+        self.shadow = QColor(0, 0, 0, 50)
 
 
 class MainWindow(QMainWindow):
@@ -175,7 +176,7 @@ class CalendarWidget(QWidget):
         super(CalendarWidget, self).__init__(parent)
         self.app = app
 
-        self.offset = 0
+        self.offset = 1368
 
     def columnWidth(self):
         return min(max(self.width() / 12.0, 40.0), 125.0)
@@ -255,6 +256,33 @@ class CalendarWidget(QWidget):
                 painter.setPen(QPen(self.app.gray))
             painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)))
             painter.restore()
+
+        self.drawRaisedRect(painter, QRect(200, 100, 120, 35), QColor(255, 0, 0))
+
+    def drawRaisedRect(self, painter, rect, color):
+        # Draw rect.
+        pen = QPen(color, 4)
+        pen.setJoinStyle(Qt.MiterJoin)
+        painter.setPen(pen)
+        painter.drawRect(rect)
+
+        painter.setPen(QPen(self.app.shadow, 3))
+
+        # Draw inner shadow.
+        painter.drawLine(
+            rect.x() + 6, rect.y() + 3,
+            rect.x() + rect.width() - 3, rect.y() + 3)
+        painter.drawLine(
+            rect.x() + 3, rect.y() + 3,
+            rect.x() + 3, rect.y() + rect.height() - 3)
+
+        # Draw outer shadow.
+        painter.drawLine(
+            rect.x() + 3, rect.y() + rect.height() + 3,
+            rect.x() + rect.width() + 3, rect.y() + rect.height() + 3)
+        painter.drawLine(
+            rect.x() + rect.width() + 3, rect.y() + 3,
+            rect.x() + rect.width() + 3, rect.y() + rect.height())
 
 
 if __name__ == "__main__":
