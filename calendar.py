@@ -239,15 +239,10 @@ class HolidayOverlay(object):
         self.brush = QBrush(app.lightRed)
 
     def matches(self, month, day):
-        return is_holiday(month, day) &~ HOLIDAY_SUNDAY
+        return is_holiday(month, day)
 
     def draw(self, painter, rect):
         painter.fillRect(rect, self.brush)
-
-
-class SundayOverlay(HolidayOverlay):
-    def matches(self, month, day):
-        return is_holiday(month, day) & HOLIDAY_SUNDAY
 
 
 class FerienNiedersachsen(HolidayOverlay):
@@ -310,7 +305,6 @@ class CalendarWidget(QWidget):
         self.overlays = [
                 FerienNiedersachsen(self.app),
                 HolidayOverlay(self.app),
-                SundayOverlay(self.app),
             ]
 
         self.selection_end = QDate.currentDate()
