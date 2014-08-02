@@ -290,12 +290,15 @@ class CalendarWidget(QWidget):
             painter.restore()
 
             painter.save()
-            painter.setPen(QPen(self.app.gray))
             for day in range(1, days_of_month(month) + 1):
                 # Draw horizontal lines.
                 yStart = 40 + 20 + (day - 1) * self.rowHeight()
                 yEnd = yStart + self.rowHeight()
-                painter.drawLine(x, yEnd, x + self.columnWidth(), yEnd)
+                if qdate(month, day).dayOfWeek() == 7:
+                    painter.setPen(QPen(self.app.gray, 2))
+                else:
+                    painter.setPen(QPen(self.app.gray))
+                painter.drawLine(x + 1, yEnd, x + self.columnWidth(), yEnd)
 
                 # Mark holidays.
                 if is_holiday(month, day):
