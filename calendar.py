@@ -292,6 +292,8 @@ class CalendarWidget(QWidget):
         super(CalendarWidget, self).__init__(parent)
         self.app = app
 
+        self.setFocusPolicy(Qt.StrongFocus)
+
         self.offset = 1368
         self.overlays = [
                 FerienNiedersachsen(self.app),
@@ -299,8 +301,8 @@ class CalendarWidget(QWidget):
                 SundayOverlay(self.app),
             ]
 
-        self.selection_end = QDate.currentDate().addDays(-2)
-        self.selection_start = QDate.currentDate().addDays(7)
+        self.selection_end = QDate.currentDate()
+        self.selection_start = self.selection_end
 
     def inSelection(self, date):
         start = min(self.selection_start, self.selection_end)
@@ -500,6 +502,23 @@ class CalendarWidget(QWidget):
         painter.drawLine(
             rect.x() + rect.width() + 1, rect.y() - 2,
             rect.x() + rect.width() + 1, rect.y() + rect.height() + 1)
+
+    def keyPressEvent(self, event):
+        if event.key() in (Qt.Key_Down, Qt.Key_Up, Qt.Key_Left, Qt.Key_Right):
+            if event.key() == Qt.Key_Down:
+                self.selection_end = self.selection_end.addDays(1)
+            elif event.key() == Qt.Key_Up:
+                self.selection_end = self.selection_end.addDays(-1)
+            elif event.key() == Qt.Key_Left:
+                self.selection_end = self.selection_end.addMonths(-1)
+            elif event.key() == Qt.Key_Right:
+                self.selection_end = self.selection_end.addMonths(1)
+
+            if not (event.modifiers() & Qt.ShiftModifier):
+                self.selection_start = self.selection_end
+            self.repaint()
+
+        return super(CalendarWidget, self).keyPressEvent(event)
 
 
 if __name__ == "__main__":
