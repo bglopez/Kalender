@@ -242,9 +242,41 @@ class HolidayOverlay(object):
     def draw(self, painter, rect):
         painter.fillRect(rect, self.brush)
 
+
 class SundayOverlay(HolidayOverlay):
     def matches(self, month, day):
         return is_holiday(month, day) & HOLIDAY_SUNDAY
+
+
+class FerienNiedersachsen(HolidayOverlay):
+    def __init__(self, app):
+        self.brush = QBrush(QColor(100, 200, 100, 50))
+
+    def matches(self, month, day):
+        year = 1900 + month // 12
+        date = qdate(month, day)
+        match = False
+
+        if year in (2013, 2014):
+            match |= QDate(2013, 1, 31) <= date <= QDate(2013, 2, 1) # Winter
+            match |= QDate(2013, 3, 16) <= date <= QDate(2013, 4, 2) # Ostern
+            match |= (date == QDate(2013, 5, 10)) or (date == QDate(2013, 5, 21)) # Pfingsten
+            match |= QDate(2013, 6, 27) <= date <= QDate(2013, 8, 7) # Sommer
+            match |= QDate(2013, 10, 4) <= date <= QDate(2013, 10, 18) # Herbst
+            match |= QDate(2013, 12, 23) <= date <= QDate(2014, 1, 3) # Weihnachten
+
+        if year in (2014, 2015):
+            match |= QDate(2014, 1, 30) <= date <= QDate(2014, 1, 31) # Winter
+            match |= (QDate(2014, 4, 3) <= date <= QDate(2014, 4, 22)) or (date == QDate(2014, 5, 2)) # Ostern
+            match |= (date == QDate(2014, 5, 30)) or (date == QDate(2014, 6, 10)) # Pfingsten
+            match |= QDate(2014, 7, 31) <= date <= QDate(2014, 9, 10) # Sommer
+            match |= QDate(2014, 10, 27) <= date <= QDate(2014, 11, 8) # Herbst
+            match |= QDate(2014, 12, 22) <= date <= QDate(2015, 1, 5) # Weihnachten
+
+        if year in (2015, 2016):
+            match |= QDate(2015, 2, 2) <= date <= QDate(2015, 2, 3) # Winter
+
+        return match
 
 
 class CalendarWidget(QWidget):
@@ -255,8 +287,9 @@ class CalendarWidget(QWidget):
 
         self.offset = 1368
         self.overlays = [
+                FerienNiedersachsen(self.app),
                 HolidayOverlay(self.app),
-                SundayOverlay(self.app)
+                SundayOverlay(self.app),
             ]
 
     def columnWidth(self):
