@@ -386,8 +386,8 @@ class CalendarWidget(QWidget):
 
                 # Draw selection end.
                 if date == self.selection_end:
-                    painter.setPen(QPen(QColor(91, 91, 255), 2))
-                    painter.drawRect(QRect(x, yStart, self.columnWidth(), self.rowHeight()))
+                    painter.setPen(QPen(QColor(30, 30, 200), 2))
+                    painter.drawRect(QRect(x + 2, yStart + 2, self.columnWidth() - 4, self.rowHeight() - 4))
 
                 # Draw day numbers.
                 if self.rowHeight() > 22 or day % 2 == 0:
