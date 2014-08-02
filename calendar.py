@@ -314,7 +314,7 @@ class CalendarWidget(QWidget):
                     font = self.font()
                     font.setPointSizeF(min(self.rowHeight() * 0.6, font.pointSizeF()))
                     painter.setFont(font)
-                    painter.drawText(QRect(x, yStart, min(self.rowHeight() / 20.0, 1.0) * 30, self.rowHeight()),
+                    painter.drawText(QRect(x, yStart, min(self.rowHeight() / 20.0, 1.0) * 25, self.rowHeight()),
                         Qt.AlignVCenter | Qt.AlignRight, str(day))
 
             painter.restore()
