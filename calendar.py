@@ -550,7 +550,7 @@ class CalendarWidget(QWidget):
             rect.x() + rect.width() + 1, rect.y() + rect.height() + 1)
 
     def keyPressEvent(self, event):
-        if event.key() in (Qt.Key_Down, Qt.Key_Up, Qt.Key_Left, Qt.Key_Right):
+        if event.key() in (Qt.Key_Down, Qt.Key_Up, Qt.Key_Left, Qt.Key_Right, Qt.Key_PageUp, Qt.Key_PageDown):
             # Move selection end.
             if event.key() == Qt.Key_Down:
                 self.selection_end = self.selection_end.addDays(1)
@@ -560,6 +560,13 @@ class CalendarWidget(QWidget):
                 self.selection_end = self.selection_end.addMonths(-1)
             elif event.key() == Qt.Key_Right:
                 self.selection_end = self.selection_end.addMonths(1)
+            elif event.key() == Qt.Key_PageUp:
+                self.selection_end = QDate(self.selection_end.year(), self.selection_end.month(), 1)
+            elif event.key() == Qt.Key_PageDown:
+                self.selection_end = QDate(
+                    self.selection_end.year(),
+                    self.selection_end.month(),
+                    days_of_month((self.selection_end.year() - 1900) * 12 + self.selection_end.month() - 1))
 
             # Also move selection start, unless modifier pressed.
             if not (event.modifiers() & Qt.ShiftModifier):
