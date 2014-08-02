@@ -134,7 +134,9 @@ class Application(QApplication):
 
     def initResources(self):
         self.leftPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "left.png"))
+        self.leftDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "left-down.png"))
         self.rightPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "right.png"))
+        self.rightDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "right-down.png"))
 
 
 class MainWindow(QMainWindow):
@@ -298,6 +300,8 @@ class VariantAnimation(QVariantAnimation):
 MOUSE_DOWN_NONE = 0
 MOUSE_DOWN_MONTH = 1
 MOUSE_DOWN_DAY = 2
+MOUSE_DOWN_LEFT = 3
+MOUSE_DOWN_RIGHT = 4
 
 
 class CalendarWidget(QWidget):
@@ -396,9 +400,17 @@ class CalendarWidget(QWidget):
                 self.style().drawControl(QStyle.CE_Header, opt, painter, self)
                 painter.restore()
 
-                # Draw buttons.
-                painter.drawPixmap(QRect(x + 5, 5, 30, 30), self.app.leftPixmap, QRect(0, 0, 30, 30))
-                painter.drawPixmap(QRect(x + 40, 5, 30, 30), self.app.rightPixmap, QRect(0, 0, 30, 30))
+                # Draw left button.
+                if self.mouse_down == MOUSE_DOWN_LEFT:
+                    painter.drawPixmap(QRect(x + 5, 5, 30, 30), self.app.leftDownPixmap, QRect(0, 0, 30, 30))
+                else:
+                    painter.drawPixmap(QRect(x + 5, 5, 30, 30), self.app.leftPixmap, QRect(0, 0, 30, 30))
+
+                # Draw right button.
+                if self.mouse_down == MOUSE_DOWN_RIGHT:
+                    painter.drawPixmap(QRect(x + 40, 5, 30, 30), self.app.rightDownPixmap, QRect(0, 0, 30, 30))
+                else:
+                    painter.drawPixmap(QRect(x + 40, 5, 30, 30), self.app.rightPixmap, QRect(0, 0, 30, 30))
 
                 # Draw title text.
                 painter.save()
@@ -609,7 +621,12 @@ class CalendarWidget(QWidget):
 
         month = self.monthForX(event.x())
 
-        if 40 < event.y() < 40 + 20:
+        if 5 <= event.y() <= 35:
+            x = (event.x() - self.offset * self.columnWidth) % (self.columnWidth * 12)
+            if 5 <= x <= 35:
+                self.mouse_down = MOUSE_DOWN_LEFT
+                self.update(QRect(0, 0, self.width(), 40))
+        elif 40 < event.y() < 40 + 20:
             self.mouse_down = MOUSE_DOWN_MONTH
             if not event.modifiers() & Qt.ShiftModifier:
                 self.selection_start = qdate(month, 1)
@@ -641,6 +658,8 @@ class CalendarWidget(QWidget):
             self.update()
 
     def mouseReleaseEvent(self, event):
+        repaint = False
+
         if event.button() == Qt.RightButton:
             month = self.monthForX(event.x())
             date = qdate(month, self.dayForY(month, event.y()))
@@ -648,13 +667,22 @@ class CalendarWidget(QWidget):
             if not self.inSelection(date):
                 self.selection_start = date
                 self.selection_end = date
-                self.repaint()
+                repaint = True
 
             print "Right click!"
-            return
+        else:
+            self.mouseMoveEvent(event)
+            repaint = True
 
-        self.mouseMoveEvent(event)
-        self.repaint()
+        if self.mouse_down:
+            if self.mouse_down == MOUSE_DOWN_LEFT:
+                self.onLeftClicked()
+
+            repaint = True
+            self.mouse_down = MOUSE_DOWN_NONE
+
+        if repaint:
+            self.repaint()
 
     def sizeHint(self):
         return QSize(40 * 12, 40 + 20 + 10 * 31 + 10)
