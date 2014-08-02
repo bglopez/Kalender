@@ -253,10 +253,15 @@ class CalendarWidget(QWidget):
             # Draw vertical lines.
             painter.save()
             if month % 12 == 0:
-                painter.setPen(QPen(self.app.gray, 2))
+                painter.setPen(QPen(self.app.gray))
+                painter.drawLine(x - 1, 40 + 20, x - 1, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)) - 1)
+                painter.setPen(QPen(self.palette().window().color()))
+                painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)))
+                painter.setPen(QPen(self.app.gray))
+                painter.drawLine(x + 1, 40 + 20, x + 1, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)) - 1)
             else:
                 painter.setPen(QPen(self.app.gray))
-            painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)))
+                painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight() * max(days_of_month(month), days_of_month(month - 1)) - 1)
             painter.restore()
 
         # Mark current day.
