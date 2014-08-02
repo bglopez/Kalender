@@ -10,6 +10,7 @@ from PySide.QtGui import *
 
 import datetime
 import sys
+import os
 
 MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
                "August", "September", "November", "Oktober", "Dezember"]
@@ -119,6 +120,10 @@ class Application(QApplication):
     def __init__(self, argv):
         super(Application, self).__init__(argv)
 
+        self.initColors()
+        self.initResources()
+
+    def initColors(self):
         self.white = QColor(255, 255, 255)
         self.black = QColor(0, 0, 0)
         self.gray = QColor(191, 191, 191)
@@ -126,6 +131,10 @@ class Application(QApplication):
         self.light = QColor(255, 255, 255, 200)
         self.red = QColor(255, 0, 0)
         self.lightRed = QColor(242, 219, 219, 100)
+
+    def initResources(self):
+        self.leftPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "left.png"))
+        self.rightPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "right.png"))
 
 
 class MainWindow(QMainWindow):
@@ -387,6 +396,10 @@ class CalendarWidget(QWidget):
                 self.style().drawControl(QStyle.CE_Header, opt, painter, self)
                 painter.restore()
 
+                # Draw buttons.
+                painter.drawPixmap(QRect(x + 5, 5, 30, 30), self.app.leftPixmap, QRect(0, 0, 30, 30))
+                painter.drawPixmap(QRect(x + 40, 5, 30, 30), self.app.rightPixmap, QRect(0, 0, 30, 30))
+
                 # Draw title text.
                 painter.save()
                 painter.setPen(QPen())
@@ -394,7 +407,7 @@ class CalendarWidget(QWidget):
                 font.setPointSizeF(font.pointSizeF() * 1.2)
                 font.setBold(True)
                 painter.setFont(font)
-                painter.drawText(QRect(x + 32, 0, self.columnWidth * 12 - 32 * 2, 40),
+                painter.drawText(QRect(x + 80, 0, self.columnWidth * 12 - 32 * 2, 40),
                     Qt.AlignVCenter, str(1900 + month // 12))
                 painter.restore()
 
