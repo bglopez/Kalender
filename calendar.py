@@ -533,6 +533,9 @@ class CalendarWidget(QWidget):
         return max(1, min((y - 40 - 20) // self.rowHeight() + 1, days_of_month(month)))
 
     def mousePressEvent(self, event):
+        if event.button() == Qt.RightButton:
+            return
+
         month = self.monthForX(event.x())
 
         if 40 < event.y() < 40 + 20:
@@ -552,6 +555,9 @@ class CalendarWidget(QWidget):
         return super(CalendarWidget, self).mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
+        if event.button() == Qt.RightButton:
+            return
+
         month = self.monthForX(event.x())
 
         if 40 < event.y() < 40 + 20:
@@ -564,6 +570,18 @@ class CalendarWidget(QWidget):
             self.update()
 
     def mouseReleaseEvent(self, event):
+        if event.button() == Qt.RightButton:
+            month = self.monthForX(event.x())
+            date = qdate(month, self.dayForY(month, event.y()))
+
+            if not self.inSelection(date):
+                self.selection_start = date
+                self.selection_end = date
+                self.repaint()
+
+            print "Right click!"
+            return
+
         self.mouseMoveEvent(event)
         self.repaint()
 
