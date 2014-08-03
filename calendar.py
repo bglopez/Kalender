@@ -331,6 +331,8 @@ class RangeDialog(QDialog):
         else:
             self.setWindowTitle("Neuer Eintrag")
 
+        self.setWindowFlags(self.windowFlags() &~ Qt.WindowContextHelpButtonHint)
+
         self.colorExplicit = bool(r.index)
 
         layout = QGridLayout(self)
