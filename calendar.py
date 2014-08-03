@@ -315,11 +315,14 @@ class RangeDialog(QDialog):
         super(RangeDialog, self).__init__(parent)
         self.app = app
 
+        self.colorExplicit = False
+
         layout = QGridLayout(self)
 
         layout.addWidget(QLabel("Farbe:"), 0, 0)
         self.colorBox = ColorButton()
         self.colorBox.setColor(r.color)
+        self.colorBox.clicked.connect(self.onColorClicked)
         layout.addWidget(self.colorBox, 0, 1, Qt.AlignLeft)
 
         layout.addWidget(QLabel("Titel:"), 1, 0)
@@ -346,6 +349,9 @@ class RangeDialog(QDialog):
 
         buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         layout.addWidget(buttons, 5, 0, 1, 2)
+
+    def onColorClicked(self):
+        self.colorExplicit = True
 
 
 class MainWindow(QMainWindow):
