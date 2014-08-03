@@ -151,6 +151,7 @@ class MainWindow(QMainWindow):
         self.app = app
 
         self.initWidget()
+        self.initOverlays()
         self.initActions()
         self.initMenu()
 
@@ -158,6 +159,13 @@ class MainWindow(QMainWindow):
 
         self.modified = True
         self.path = "test.json"
+
+    def initOverlays(self):
+        self.ferienNiedersachsenOverlay = FerienNiedersachsen(self.app)
+        self.calendar.overlays.append(self.ferienNiedersachsenOverlay)
+
+        self.holidayOverlay = HolidayOverlay(self.app)
+        self.calendar.overlays.append(self.holidayOverlay)
 
     def initActions(self):
         self.newAction = QAction("Neu", self)
@@ -183,6 +191,16 @@ class MainWindow(QMainWindow):
         self.rightAction = QAction("Jahr vor", self)
         self.rightAction.triggered.connect(self.calendar.onRightClicked)
 
+        self.holidayAction = QAction("Feiertage", self)
+        self.holidayAction.setIcon(self.holidayOverlay.icon())
+        self.holidayAction.setCheckable(True)
+        self.holidayAction.toggled.connect(self.onHolidaysToggled)
+
+        self.ferienNiedersachsenAction = QAction("Schulferien Niedersachsen", self)
+        self.ferienNiedersachsenAction.setIcon(self.ferienNiedersachsenOverlay.icon())
+        self.ferienNiedersachsenAction.setCheckable(True)
+        self.ferienNiedersachsenAction.toggled.connect(self.onFerienNiedersachsenToggled)
+
         self.aboutAction = QAction(u"Über ...", self)
         self.aboutAction.triggered.connect(self.onAboutAction)
         self.aboutAction.setShortcut("F1")
@@ -204,10 +222,14 @@ class MainWindow(QMainWindow):
         viewMenu.addAction(self.leftAction)
         viewMenu.addAction(self.todayAction)
         viewMenu.addAction(self.rightAction)
+        viewMenu.addSeparator()
+        viewMenu.addAction(self.holidayAction)
+        viewMenu.addAction(self.ferienNiedersachsenAction)
 
         infoMenu = self.menuBar().addMenu("Info")
         infoMenu.addAction(self.aboutAction)
         infoMenu.addAction(self.aboutQtAction)
+
 
     def initWidget(self):
         self.calendar = CalendarWidget(self.app, self)
@@ -234,6 +256,14 @@ class MainWindow(QMainWindow):
 
     def onSaveAsAction(self):
         return True
+
+    def onHolidaysToggled(self, checked):
+        self.holidayOverlay.enabled = checked
+        self.calendar.repaint()
+
+    def onFerienNiedersachsenToggled(self, checked):
+        self.ferienNiedersachsenOverlay.enabled = checked
+        self.calendar.repaint()
 
     def askClose(self):
         if not self.modified:
@@ -267,19 +297,35 @@ class MainWindow(QMainWindow):
 class HolidayOverlay(object):
     def __init__(self, app):
         self.brush = QBrush(app.lightRed)
+        self.enabled = True
 
     def matches(self, month, day):
-        return is_holiday(month, day)
+        return self.enabled and is_holiday(month, day)
 
     def draw(self, painter, rect):
         painter.fillRect(rect, self.brush)
+
+    def icon(self):
+        pixmap = QPixmap(16, 16)
+        painter = QPainter(pixmap)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(QColor(255, 255, 255))
+        painter.drawRect(0, 0, 16, 16)
+        painter.setBrush(self.brush)
+        painter.drawRect(0, 0, 16, 16)
+        painter.end()
+        return QIcon(pixmap)
 
 
 class FerienNiedersachsen(HolidayOverlay):
     def __init__(self, app):
         self.brush = QBrush(QColor(100, 200, 100, 50))
+        self.enabled = True
 
     def matches(self, month, day):
+        if not self.enabled:
+            return False
+
         year = 1900 + month // 12
         date = qdate(month, day)
         match = False
@@ -335,10 +381,7 @@ class CalendarWidget(QWidget):
         self.targetOffset = float(QDate.currentDate().year() - 1900) * 12
         self.offset = self.targetOffset
 
-        self.overlays = [
-                FerienNiedersachsen(self.app),
-                HolidayOverlay(self.app),
-            ]
+        self.overlays = [ ]
 
         self.selection_end = QDate.currentDate()
         self.selection_start = self.selection_end
