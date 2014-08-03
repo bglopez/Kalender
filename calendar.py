@@ -438,7 +438,7 @@ class MainWindow(QMainWindow):
         self.restoreSettings()
 
         self.setWindowTitle("Kalender")
-	self.setWindowIcon(self.app.calendarIcon)
+        self.setWindowIcon(self.app.calendarIcon)
 
     def setModel(self, model):
         if self.model:
@@ -996,6 +996,7 @@ class CalendarWidget(QWidget):
             painter.restore()
 
             painter.save()
+
             for day in range(1, days_of_month(month) + 1):
                 date = qdate(month, day)
 
@@ -1052,6 +1053,7 @@ class CalendarWidget(QWidget):
                 painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)) - 1)
             painter.restore()
 
+        # Draw ranges.
         painter.save()
         for key in sorted(self.model.ranges):
             r = self.model.ranges[key]
