@@ -274,7 +274,7 @@ class Application(QApplication):
         self.deletePixmap = QPixmap(os.path.join(os.path.dirname(__file__), "delete.png"))
 
     def initSettings(self):
-        self.settings = QSettings("Injoy Osterode", "Calendar")
+        self.settings = QSettings("Injoy Osterode", "Kalender")
 
 
 class ColorButton(QPushButton):
