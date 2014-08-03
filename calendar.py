@@ -320,6 +320,8 @@ class RangeDialog(QDialog):
 
         if r.title:
             self.setWindowTitle(r.title)
+        elif r.index:
+            self.setWindowTitle("Eintrag %d" % r.index)
         else:
             self.setWindowTitle("Neuer Eintrag")
 
