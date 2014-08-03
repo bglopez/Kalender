@@ -12,11 +12,13 @@ import datetime
 import sys
 import os
 
+
 MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
                "August", "September", "November", "Oktober", "Dezember"]
 
 WEEKDAY_NAMES = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag",
                  "Freitag", "Samstag", "Sonntag"]
+
 
 GOLDEN_RATIO_CONJUGATE = 0.618033988749895
 
@@ -115,6 +117,27 @@ def is_holiday(month, day):
     return holiday
 
 
+class Range(object):
+    def __init__(self):
+        self.index = None
+        self.deleted = False
+        self.title = ""
+        self.notes = ""
+        self.start = QDate(2014, 8, 3)
+        self.end = QDate(2014, 8, 4)
+        self.color = QColor(0, 255, 0)
+
+
+class Model(QObject):
+
+    modelChanged = Signal()
+
+    def __init__(self):
+        super(Model, self).__init__()
+        self.ranges = { }
+        self.ranges[1] = Range()
+
+
 class Application(QApplication):
 
     def __init__(self, argv):
@@ -163,6 +186,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Kalender")
 
+        self.model = Model()
         self.modified = True
         self.path = "test.json"
 
@@ -397,6 +421,7 @@ class FerienNiedersachsen(HolidayOverlay):
 
         return match
 
+
 class HolidaysClausthal(HolidayOverlay):
     def __init__(self, app):
         self.brush = QBrush(QColor(255, 255, 0, 50))
@@ -449,6 +474,7 @@ class CalendarWidget(QWidget):
         self.offset = self.targetOffset
 
         self.overlays = [ ]
+        self.model = Model()
 
         self.selection_end = QDate.currentDate()
         self.selection_start = self.selection_end
@@ -504,9 +530,13 @@ class CalendarWidget(QWidget):
         self.repaint()
 
     def inSelection(self, date):
-        start = min(self.selection_start, self.selection_end)
-        end = max(self.selection_start, self.selection_end)
-        return start <= date <= end
+        return self.selectionStart() <= date <= self.selectionEnd()
+
+    def selectionStart(self):
+        return min(self.selection_start, self.selection_end)
+
+    def selectionEnd(self):
+        return max(self.selection_start, self.selection_end)
 
     def calculateColumnWidth(self):
         return min(max(self.width() / 12.0, 40.0), 125.0)
@@ -650,10 +680,10 @@ class CalendarWidget(QWidget):
 
         painter.save()
         self.latest_range_offset = 0.0
-        self.drawRange(painter, 1368, 6, 1370, 12, QColor(0, 155, 0))
-        self.drawRange(painter, 1370, 7, 1370, 26, QColor(155, 155, 0))
-        self.drawRange(painter, 1372, 20, 1372, 20, QColor(0, 0, 155))
-        self.drawRange(painter, 1375, 15, 1375, 21, QColor(0, 155, 155))
+        for key in sorted(self.model.ranges):
+            r = self.model.ranges[key]
+            if not r.deleted:
+                self.drawRange(painter, r.start, r.end, r.color)
         painter.restore()
 
         # Mark current day.
@@ -662,7 +692,14 @@ class CalendarWidget(QWidget):
         x = (month - self.offset) * self.columnWidth
         self.drawRaisedRect(painter, QRect(x, 40 + 20 + (now.day - 1) * self.rowHeight, self.columnWidth, self.rowHeight), self.app.red)
 
-    def drawRange(self, painter, from_month, from_day, to_month, to_day, color):
+    def drawRange(self, painter, start, end, color):
+        from_month = (start.year() - 1900) * 12 + start.month() - 1
+        from_day = start.day()
+
+        to_month = (end.year() - 1900) * 12 + start.month() - 1
+        to_day = end.day()
+
+
         self.latest_range_offset += GOLDEN_RATIO_CONJUGATE
         self.latest_range_offset %= 1
 
