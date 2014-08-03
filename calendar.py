@@ -936,6 +936,8 @@ class CalendarWidget(QWidget):
                 self.onRightClicked()
 
             self.repaint()
+        elif event.key() in (Qt.Key_Enter, Qt.Key_Return):
+            self.onNewClicked()
 
         return super(CalendarWidget, self).keyPressEvent(event)
 
