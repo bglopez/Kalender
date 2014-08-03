@@ -140,6 +140,9 @@ class Application(QApplication):
         self.todayPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "today.png"))
         self.todayDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "today-down.png"))
 
+        self.newPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "new.png"))
+        self.newDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "new-down.png"))
+
 
 class MainWindow(QMainWindow):
 
@@ -305,6 +308,7 @@ MOUSE_DOWN_DAY = 2
 MOUSE_DOWN_LEFT = 3
 MOUSE_DOWN_RIGHT = 4
 MOUSE_DOWN_TODAY = 5
+MOUSE_DOWN_NEW = 6
 
 class CalendarWidget(QWidget):
 
@@ -364,6 +368,9 @@ class CalendarWidget(QWidget):
         self.animation.start()
 
         self.animationEnabled = True
+
+    def onNewClicked(self):
+        print "New!"
 
     def onAnimate(self, value):
         if not self.animationEnabled:
@@ -441,6 +448,12 @@ class CalendarWidget(QWidget):
                 painter.drawText(QRect(x + 120, 0, self.columnWidth * 12 - 32 * 2, 40),
                     Qt.AlignVCenter, str(1900 + month // 12))
                 painter.restore()
+
+                # Draw new pixmap.
+                if self.mouse_down == MOUSE_DOWN_NEW:
+                    painter.drawPixmap(QRect(x + 200, 5, 146, 30), self.app.newDownPixmap, QRect(0, 0, 146, 30))
+                else:
+                    painter.drawPixmap(QRect(x + 200, 5, 146, 30), self.app.newPixmap, QRect(0, 0, 146, 30))
 
             # Draw month header.
             painter.save()
@@ -651,6 +664,9 @@ class CalendarWidget(QWidget):
             if 75 <= x <= 105:
                 self.mouse_down = MOUSE_DOWN_RIGHT
                 self.update(QRect(0, 0, self.width(), 40))
+            if 200 <= x <= 200 + 146:
+                self.mouse_down = MOUSE_DOWN_NEW
+                self.update(QRect(0, 0, self.width(), 40))
         elif 40 < event.y() < 40 + 20:
             self.mouse_down = MOUSE_DOWN_MONTH
             if not event.modifiers() & Qt.ShiftModifier:
@@ -711,6 +727,8 @@ class CalendarWidget(QWidget):
                     self.onTodayClicked()
                 elif 75 <= x <= 105 and self.mouse_down == MOUSE_DOWN_RIGHT:
                     self.onRightClicked()
+                elif 200 <= x <= 200 + 146 and self.mouse_down == MOUSE_DOWN_NEW:
+                    self.onNewClicked()
 
             repaint = True
             self.mouse_down = MOUSE_DOWN_NONE
