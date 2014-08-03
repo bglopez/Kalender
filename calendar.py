@@ -660,7 +660,7 @@ class MainWindow(QMainWindow):
         r.end = self.calendar.selectionEnd()
         r.color = QColor.fromHsvF(
             (GOLDEN_RATIO_CONJUGATE * self.model.nextId()) % 1,
-            0.95, 0.5)
+            0.5, 0.8)
 
         dialog = RangeDialog(self.app, r, self)
         dialog.show()
