@@ -242,8 +242,18 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.calendar)
 
     def restoreSettings(self):
+        # Restore window.
         self.restoreGeometry(self.app.settings.value("geometry"))
         self.restoreState(self.app.settings.value("state"))
+
+        # Restore holidays.
+        self.holidayOverlay.enabled = bool(int(self.app.settings.value("holidays", "1")))
+        self.holidayAction.setChecked(self.holidayOverlay.enabled)
+
+        # Restore Schulferien Niedersachsen.
+        self.ferienNiedersachsenOverlay.enabled = bool(int(self.app.settings.value("ferienNiedersachsen", "1")))
+        self.ferienNiedersachsenAction.setChecked(self.ferienNiedersachsenOverlay.enabled)
+
 
     def onAboutAction(self):
         QMessageBox.about(
@@ -301,6 +311,8 @@ class MainWindow(QMainWindow):
         if self.askClose():
             self.app.settings.setValue("geometry", self.saveGeometry())
             self.app.settings.setValue("windowState", self.saveState())
+            self.app.settings.setValue("holidays", str(int(self.holidayOverlay.enabled)))
+            self.app.settings.setValue("ferienNiedersachsen", str(int(self.ferienNiedersachsenOverlay.enabled)))
             event.accept()
         else:
             event.ignore()
