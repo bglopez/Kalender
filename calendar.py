@@ -147,6 +147,7 @@ class Model(QObject):
     def __init__(self):
         super(Model, self).__init__()
         self.ranges = { }
+        self.modified = False
 
         self.undoStack = [ ]
         self.redoStack = [ ]
@@ -171,6 +172,8 @@ class Model(QObject):
         self.ranges[i] = r.copy()
         self.ranges[i].index = i
         self.redoStack = []
+
+        self.modified = True
 
         self.modelChanged.emit()
 
@@ -199,6 +202,16 @@ class Model(QObject):
         self.ranges[action.index] = action.copy()
 
         self.modelChanged.emit()
+
+    def save(self, path):
+        pass # TODO: Save
+        self.modified = False
+
+    @classmethod
+    def load(cls, path):
+        model = Model()
+        # TODO: Load
+        return model
 
 
 class Application(QApplication):
@@ -293,8 +306,10 @@ class MainWindow(QMainWindow):
 
     def initActions(self):
         self.newAction = QAction("Neu", self)
+        self.newAction.triggered.connect(self.onNewAction)
 
         self.openAction = QAction(u"Öffnen ...", self)
+        self.openAction.triggered.connect(self.onOpenAction)
 
         self.saveAction = QAction("Speichern", self)
         self.saveAction.triggered.connect(self.onSaveAction)
@@ -416,11 +431,25 @@ class MainWindow(QMainWindow):
     def onSaveAction(self):
         if not self.path:
             return self.onSaveAsAction()
+        else:
+            self.model.save(self.path)
 
         return True
 
     def onSaveAsAction(self):
+        self.path = None # TODO: Dialog
+        self.model.save(self.path)
         return True
+
+    def onNewAction(self):
+        if self.askClose():
+            self.path = None
+            self.setModel(Model())
+
+    def onOpenAction(self):
+        if self.askClose():
+            self.path = None # TODO: Dialog
+            self.setModel(Model.load(self.path))
 
     def onHolidaysToggled(self, checked):
         self.holidayOverlay.enabled = checked
@@ -453,7 +482,7 @@ class MainWindow(QMainWindow):
         self.calendar.model.commit(r)
 
     def askClose(self):
-        if not self.modified:
+        if not self.model.modified:
             return True
 
         if not self.path:
