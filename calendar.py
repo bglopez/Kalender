@@ -224,9 +224,21 @@ class Model(QObject):
 
     @classmethod
     def load(cls, path):
-        print "loading", path
-        model = Model()
-        # TODO: Load
+        model = cls()
+
+        with open(path, "r") as handle:
+            document = json.load(handle)
+
+            for key in document:
+                r = Range()
+                r.index = int(key)
+                r.title = document[key]["title"]
+                r.notes = document[key]["notes"]
+                r.start = QDate.fromString(document[key]["start"], Qt.ISODate)
+                r.end = QDate.fromString(document[key]["end"], Qt.ISODate)
+                r.color = QColor(document[key]["color"])
+                model.ranges[r.index] = r
+
         return model
 
 
@@ -434,6 +446,7 @@ class MainWindow(QMainWindow):
         if self.app.settings.value("path"):
             try:
                 self.setModel(Model.load(self.app.settings.value("path")))
+                self.path = self.app.settings.value("path")
             except Exception, e:
                 print e
 
