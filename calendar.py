@@ -312,11 +312,15 @@ class ColorButton(QPushButton):
 
 class RangeDialog(QDialog):
 
+    dialogs = [ ]
+
     def __init__(self, app, r, parent):
         super(RangeDialog, self).__init__(parent)
         self.app = app
         self.r = r
         self.parent = parent
+
+        self.dialogs.append(self)
 
         if r.title:
             self.setWindowTitle(r.title)
@@ -405,6 +409,11 @@ class RangeDialog(QDialog):
         r.end = max(self.startBox.date(), self.endBox.date())
         r.notes = self.notesBox.toPlainText()
         return r
+
+    def closeEvent(self, event):
+        if self in self.dialogs:
+            self.dialogs.remove(self)
+        return super(RangeDialog, self).closeEvent(event)
 
 
 class MainWindow(QMainWindow):
@@ -664,7 +673,7 @@ class MainWindow(QMainWindow):
         dialog.show()
 
     def askClose(self):
-        if not self.model.modified:
+        if not self.model.modified and not RangeDialog.dialogs:
             return True
 
         if not self.path:
@@ -675,6 +684,11 @@ class MainWindow(QMainWindow):
         result = QMessageBox.question(
             self, u"Ungespeicherte Änderungen", question,
             QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+
+        if result == QMessageBox.Save or result == QMessageBox.Discard:
+            while RangeDialog.dialogs:
+                dialog = RangeDialog.dialogs.pop()
+                dialog.close()
 
         if result == QMessageBox.Save:
             if not self.onSaveAction():
