@@ -147,50 +147,52 @@ class Model(QObject):
     def __init__(self):
         super(Model, self).__init__()
         self.ranges = { }
-        self.ranges[1] = Range()
 
-        self.undo = [ ]
-        self.redo = [ ]
+        self.undoStack = [ ]
+        self.redoStack = [ ]
 
     def commit(self, r):
-        if r.index and r.index in self.ranges:
-            restoreAction = self.ranges[r.index]
-            self.undo.append(restoreAction)
-        else:
-            deleteAction = Range()
-            deleteAction.index = r.index
-            deleteAction.deleted = True
-            self.undo.append(deleteAction)
-
         i = r.index
         if not i:
-            i = max(self.ranges.keys()) + 1
+            if not self.ranges:
+                i = 1
+            else:
+                i = max(self.ranges.keys()) + 1
+
+        if i in self.ranges:
+            restoreAction = self.ranges[i]
+            self.undoStack.append(restoreAction)
+        else:
+            deleteAction = Range()
+            deleteAction.index = i
+            deleteAction.deleted = True
+            self.undoStack.append(deleteAction)
 
         self.ranges[i] = r.copy()
         self.ranges[i].index = i
-        self.redo = []
+        self.redoStack = []
 
         self.modelChanged.emit()
 
     def undo(self):
-        if not self.undo:
+        if not self.undoStack:
             return
 
-        action = self.undo.pop()
+        action = self.undoStack.pop()
 
         restoreAction = self.ranges[action.index]
-        self.redo.append(restoreAction)
+        self.redoStack.append(restoreAction)
 
         self.modelChanged.emit()
 
     def redo(self):
-        if not self.redo:
+        if not self.redoStack:
             return
 
-        action = self.redo.pop()
+        action = self.redoStack.pop()
 
         restoreAction = self.ranges[action.index]
-        self.undo.append(restoreAction)
+        self.undoStack.append(restoreAction)
 
         self.modelChanged.emit()
 
@@ -263,7 +265,17 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Kalender")
 
         self.modified = True
+        self.model = None
+        self.setModel(Model())
         self.path = "test.json"
+
+    def setModel(self, model):
+        if self.model:
+            self.model.modelChanged.disconnect(self.onModelChanged)
+        self.model = model
+        self.model.modelChanged.connect(self.onModelChanged)
+        self.calendar.setModel(model)
+        self.onModelChanged()
 
     def initOverlays(self):
         self.ferienNiedersachsenOverlay = FerienNiedersachsen(self.app)
@@ -289,6 +301,14 @@ class MainWindow(QMainWindow):
 
         self.closeAction = QAction(u"Schließen", self)
         self.closeAction.triggered.connect(self.onCloseAction)
+
+        self.undoAction = QAction(u"Rückgängig", self)
+        self.undoAction.setShortcut("Ctrl+Z")
+        self.undoAction.triggered.connect(self.onUndoAction)
+
+        self.redoAction = QAction("Wiederholen", self)
+        self.redoAction.setShortcut("Ctrl+Y")
+        self.redoAction.triggered.connect(self.onRedoAction)
 
         self.createAction = QAction("Eintrag erstellen", self)
         self.createAction.setShortcut("Ctrl+N")
@@ -336,6 +356,8 @@ class MainWindow(QMainWindow):
         fileMenu.addAction(self.closeAction)
 
         editMenu = self.menuBar().addMenu("Bearbeiten")
+        editMenu.addAction(self.undoAction)
+        editMenu.addAction(self.redoAction)
         editMenu.addSeparator()
         editMenu.addAction(self.createAction)
 
@@ -406,6 +428,16 @@ class MainWindow(QMainWindow):
     def onHolidaysClausthalToggled(self, checked):
         self.holidaysClausthalOverlay.enabled = checked
         self.calendar.repaint()
+
+    def onUndoAction(self):
+        self.calendar.model.undo()
+
+    def onRedoAction(self):
+        self.calendar.model.redo()
+
+    def onModelChanged(self):
+        self.undoAction.setEnabled(bool(self.calendar.model.undoStack))
+        self.redoAction.setEnabled(bool(self.calendar.model.redoStack))
 
     def onCreateAction(self):
         #dialog = RangeDialog(self.app, self)
@@ -579,6 +611,7 @@ class CalendarWidget(QWidget):
             self.model.modelChanged.disconnect(self.update)
         self.model = model
         self.model.modelChanged.connect(self.update)
+        self.update()
 
     def onLeftClicked(self):
         self.animationEnabled = False
