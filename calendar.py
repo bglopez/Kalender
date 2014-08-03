@@ -173,6 +173,9 @@ class MainWindow(QMainWindow):
         self.holidayOverlay = HolidayOverlay(self.app)
         self.calendar.overlays.append(self.holidayOverlay)
 
+        self.holidaysClausthalOverlay = HolidaysClausthal(self.app)
+        self.calendar.overlays.append(self.holidaysClausthalOverlay)
+
     def initActions(self):
         self.newAction = QAction("Neu", self)
 
@@ -207,6 +210,11 @@ class MainWindow(QMainWindow):
         self.ferienNiedersachsenAction.setCheckable(True)
         self.ferienNiedersachsenAction.toggled.connect(self.onFerienNiedersachsenToggled)
 
+        self.holidaysClausthalAction = QAction("Vorlesungsfreie Zeit Clausthal", self)
+        self.holidaysClausthalAction.setIcon(self.holidaysClausthalOverlay.icon())
+        self.holidaysClausthalAction.setCheckable(True)
+        self.holidaysClausthalAction.toggled.connect(self.onHolidaysClausthalToggled)
+
         self.aboutAction = QAction(u"Über ...", self)
         self.aboutAction.triggered.connect(self.onAboutAction)
         self.aboutAction.setShortcut("F1")
@@ -231,6 +239,7 @@ class MainWindow(QMainWindow):
         viewMenu.addSeparator()
         viewMenu.addAction(self.holidayAction)
         viewMenu.addAction(self.ferienNiedersachsenAction)
+        viewMenu.addAction(self.holidaysClausthalAction)
 
         infoMenu = self.menuBar().addMenu("Info")
         infoMenu.addAction(self.aboutAction)
@@ -254,6 +263,9 @@ class MainWindow(QMainWindow):
         self.ferienNiedersachsenOverlay.enabled = bool(int(self.app.settings.value("ferienNiedersachsen", "1")))
         self.ferienNiedersachsenAction.setChecked(self.ferienNiedersachsenOverlay.enabled)
 
+        # Restore Vorlesungsfreie Zeit Clausthal.
+        self.holidaysClausthalOverlay.enabled = bool(int(self.app.settings.value("holidaysClausthal", "0")))
+        self.holidaysClausthalAction.setChecked(self.holidaysClausthalOverlay.enabled)
 
     def onAboutAction(self):
         QMessageBox.about(
@@ -285,6 +297,10 @@ class MainWindow(QMainWindow):
         self.ferienNiedersachsenOverlay.enabled = checked
         self.calendar.repaint()
 
+    def onHolidaysClausthalToggled(self, checked):
+        self.holidaysClausthalOverlay.enabled = checked
+        self.calendar.repaint()
+
     def askClose(self):
         if not self.modified:
             return True
@@ -313,6 +329,7 @@ class MainWindow(QMainWindow):
             self.app.settings.setValue("windowState", self.saveState())
             self.app.settings.setValue("holidays", str(int(self.holidayOverlay.enabled)))
             self.app.settings.setValue("ferienNiedersachsen", str(int(self.ferienNiedersachsenOverlay.enabled)))
+            self.app.settings.setValue("holidaysClausthal", str(int(self.holidaysClausthalOverlay.enabled)))
             event.accept()
         else:
             event.ignore()
@@ -377,6 +394,26 @@ class FerienNiedersachsen(HolidayOverlay):
             match |= QDate(2015, 7, 23) <= date <= QDate(2015, 9, 2) # Sommer
             match |= QDate(2015, 10, 19) <= date <= QDate(2015, 10, 31) # Herbst
             match |= QDate(2015, 12, 23) <= date <= QDate(2016, 1, 6) # Weihnachten
+
+        return match
+
+class HolidaysClausthal(HolidayOverlay):
+    def __init__(self, app):
+        self.brush = QBrush(QColor(255, 255, 0, 50))
+        self.enabled = True
+
+    def matches(self, month, day):
+        if not self.enabled:
+            return False
+
+        year = 1900 + month // 12
+        date = qdate(month, day)
+        match = False
+
+        if year in (2014, 2015):
+            match |= QDate(2014, 6, 7) < date < QDate(2014, 6, 16) # Pfingsten
+            match |= QDate(2014, 7, 26) < date < QDate(2014, 10, 1) # Sommer
+            match |= QDate(2014, 12, 20) < date < QDate(2015, 1, 5) # Weihnachten
 
         return match
 
