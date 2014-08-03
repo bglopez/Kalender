@@ -502,7 +502,7 @@ class MainWindow(QMainWindow):
             path, _ = QFileDialog.getOpenFileName(self, u"Kalender öffnen", self.path, "Jahrekalender (*.json)")
             if path:
                 try:
-                    self.setModel(Model.load(self.path))
+                    self.setModel(Model.load(path))
                     self.path = path
                 except Exception, e:
                     # TODO Error
