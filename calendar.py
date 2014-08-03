@@ -16,7 +16,7 @@ import itertools
 
 
 MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
-               "August", "September", "November", "Oktober", "Dezember"]
+               "August", "September", "Oktober", "November", "Dezember"]
 
 WEEKDAY_NAMES = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag",
                  "Freitag", "Samstag", "Sonntag"]
