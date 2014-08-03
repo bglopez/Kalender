@@ -11,3 +11,8 @@ Installation auf Windows
  * PySide installieren
  * compile.bat
  * install-shortcut.vbs
+
+Lizenz
+------
+
+Lizensiert unter der GPL 3. Für Details siehe LICENSE.
