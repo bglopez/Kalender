@@ -567,7 +567,7 @@ class MainWindow(QMainWindow):
                 self.model.save(self.path)
                 return True
             except Exception, e:
-                # TODO: Error
+                QMessageBox.critical(self, "Fehler", "Speichern fehlgeschlagen.")
                 print e
                 return False
 
@@ -582,7 +582,7 @@ class MainWindow(QMainWindow):
                 self.model.save(self.path)
                 return True
             except Exception, e:
-                # TODO Error
+                QMessageBox.critical(self, "Fehler", "Speichern fehlgeschlagen.")
                 print e
                 return False
         else:
@@ -601,7 +601,7 @@ class MainWindow(QMainWindow):
                     self.setModel(Model.load(path))
                     self.path = path
                 except Exception, e:
-                    # TODO Error
+                    QMessageBox.critical(self, "Fehler", u"Öffnen fehlgeschlagen.")
                     print e
                     return False
 
