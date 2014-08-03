@@ -11,7 +11,6 @@ from PySide.QtGui import *
 import datetime
 import sys
 import os
-import random
 import json
 import itertools
 
@@ -126,8 +125,8 @@ class Range(object):
         self.deleted = False
         self.title = ""
         self.notes = ""
-        self.start = QDate().currentDate()
-        self.end = QDate().currentDate()
+        self.start = QDate()
+        self.end = QDate()
         self.color = QColor()
 
     def copy(self):
@@ -155,7 +154,7 @@ class Model(QObject):
         self.redoStack = [ ]
 
     def nextId(self):
-        return max(itertools.chain(self.ranges.keys(), [0]))
+        return max(itertools.chain(self.ranges.keys(), [0])) + 1
 
     def commit(self, r):
         i = r.index if r.index else self.nextId()
@@ -314,6 +313,13 @@ class RangeDialog(QDialog):
     def __init__(self, app, r, parent=None):
         super(RangeDialog, self).__init__(parent)
         self.app = app
+        self.r = r
+        self.parent = parent
+
+        if r.title:
+            self.setWindowTitle(r.title)
+        else:
+            self.setWindowTitle("Neuer Eintrag")
 
         self.colorExplicit = False
 
@@ -348,10 +354,23 @@ class RangeDialog(QDialog):
         layout.addWidget(self.notesBox, 4, 1)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        buttons.accepted.connect(self.onSave)
         layout.addWidget(buttons, 5, 0, 1, 2)
 
     def onColorClicked(self):
         self.colorExplicit = True
+
+    def onSave(self):
+        r = Range()
+        r.index = self.r.index
+        r.color = self.colorBox.color()
+        r.title = self.titleBox.text().strip()
+        r.start = min(self.startBox.date(), self.endBox.date())
+        r.end = max(self.startBox.date(), self.endBox.date())
+        r.notes = self.notesBox.toPlainText()
+
+        self.parent.model.commit(r)
+        self.accept()
 
 
 class MainWindow(QMainWindow):
@@ -596,7 +615,7 @@ class MainWindow(QMainWindow):
         r.start = self.calendar.selectionStart()
         r.end = self.calendar.selectionEnd()
         r.color = QColor.fromHsvF(
-            (GOLDEN_RATIO_CONJUGATE * (self.model.nextId() + random.randint(0, 5))) % 1,
+            (GOLDEN_RATIO_CONJUGATE * self.model.nextId()) % 1,
             0.95, 0.5)
 
         dialog = RangeDialog(self.app, r, self)
