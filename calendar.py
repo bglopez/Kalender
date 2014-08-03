@@ -269,6 +269,8 @@ class Application(QApplication):
         self.newPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "new.png"))
         self.newDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "new-down.png"))
 
+        self.deletePixmap = QPixmap(os.path.join(os.path.dirname(__file__), "delete.png"))
+
     def initSettings(self):
         self.settings = QSettings("Injoy Osterode", "Calendar")
 
@@ -353,15 +355,31 @@ class RangeDialog(QDialog):
         self.notesBox.setText(r.notes)
         layout.addWidget(self.notesBox, 4, 1)
 
+        deleteButton = QPushButton()
+        deleteButton.setIcon(QIcon(self.app.deletePixmap))
+        deleteButton.clicked.connect(self.onDelete)
+        layout.addWidget(deleteButton, 5, 0, Qt.AlignLeft)
+
         buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         buttons.rejected.connect(self.reject)
         buttons.accepted.connect(self.onSave)
-        layout.addWidget(buttons, 5, 0, 1, 2)
+        layout.addWidget(buttons, 5, 1)
 
     def onColorClicked(self):
         self.colorExplicit = True
 
     def onSave(self):
+        self.parent.model.commit(self.range())
+        self.accept()
+
+    def onDelete(self):
+        r = self.range()
+        if r.index:
+            r.deleted = True
+            self.parent.model.commit(r)
+        self.reject()
+
+    def range(self):
         r = Range()
         r.index = self.r.index
         r.color = self.colorBox.color()
@@ -369,9 +387,7 @@ class RangeDialog(QDialog):
         r.start = min(self.startBox.date(), self.endBox.date())
         r.end = max(self.startBox.date(), self.endBox.date())
         r.notes = self.notesBox.toPlainText()
-
-        self.parent.model.commit(r)
-        self.accept()
+        return r
 
 
 class MainWindow(QMainWindow):
