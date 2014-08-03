@@ -335,17 +335,17 @@ class RangeDialog(QDialog):
 
         layout = QGridLayout(self)
 
-        layout.addWidget(QLabel("Farbe:"), 0, 0)
-        self.colorBox = ColorButton()
-        self.colorBox.setColor(r.color)
-        self.colorBox.clicked.connect(self.onColorClicked)
-        layout.addWidget(self.colorBox, 0, 1, Qt.AlignLeft)
-
-        layout.addWidget(QLabel("Titel:"), 1, 0)
+        layout.addWidget(QLabel("Titel:"), 0, 0)
         self.titleBox = QLineEdit()
         self.titleBox.setText(r.title)
         self.titleBox.textChanged.connect(self.onTitleChanged)
-        layout.addWidget(self.titleBox, 1, 1)
+        layout.addWidget(self.titleBox, 0, 1)
+
+        layout.addWidget(QLabel("Farbe:"), 1, 0)
+        self.colorBox = ColorButton()
+        self.colorBox.setColor(r.color)
+        self.colorBox.clicked.connect(self.onColorClicked)
+        layout.addWidget(self.colorBox, 1, 1, Qt.AlignLeft)
 
         layout.addWidget(QLabel("Von:"), 2, 0)
         self.startBox = QDateEdit()
@@ -676,7 +676,11 @@ class MainWindow(QMainWindow):
         dialog.show()
 
     def askClose(self):
-        if not self.model.modified and not RangeDialog.dialogs:
+        while RangeDialog.dialogs:
+	    dialog = RangeDialog.dialogs.pop()
+	    dialog.close()
+
+        if not self.model.modified:
             return True
 
         if not self.path:
@@ -687,11 +691,6 @@ class MainWindow(QMainWindow):
         result = QMessageBox.question(
             self, u"Ungespeicherte Änderungen", question,
             QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
-
-        if result == QMessageBox.Save or result == QMessageBox.Discard:
-            while RangeDialog.dialogs:
-                dialog = RangeDialog.dialogs.pop()
-                dialog.close()
 
         if result == QMessageBox.Save:
             if not self.onSaveAction():
