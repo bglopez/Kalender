@@ -1270,7 +1270,7 @@ class CalendarWidget(QWidget):
 
     def showContextMenu(self, pos):
         menu = QMenu()
-        action = menu.addAction("Neuer Eintrag")
+        action = menu.addAction("Eintrag erstellen")
         action.triggered.connect(self.onNewClicked)
 
         if len(self.actions.actions()):
