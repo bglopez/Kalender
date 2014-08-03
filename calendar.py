@@ -808,6 +808,8 @@ class CalendarWidget(QWidget):
         self.animation.setDuration(1000)
         self.animationEnabled = False
 
+        self.actions = QActionGroup(self)
+
     def setModel(self, model):
         if self.model:
             self.model.modelChanged.disconnect(self.update)
@@ -1198,7 +1200,43 @@ class CalendarWidget(QWidget):
                 self.selection_end = date
                 repaint = True
 
-            print "Right click!"
+            # Open context menu.
+            menu = QMenu()
+            action = menu.addAction("Neuer Eintrag")
+            action.triggered.connect(self.onNewClicked)
+            menu.addSeparator()
+            while self.actions.actions():
+                self.actions.removeAction(self.actions.actions()[0])
+            for key in sorted(self.model.ranges):
+                r = self.model.ranges[key]
+                if r.deleted:
+                    continue
+                if r.end < self.selectionStart():
+                    continue
+                if r.start > self.selectionEnd():
+                    continue
+
+                if r.title:
+                    action = self.actions.addAction(r.title)
+                else:
+                    action = self.actions.addAction("Eintrag %d" % r.index)
+
+                action.setData(r.index)
+
+                pixmap = QPixmap(24, 24)
+                painter = QPainter(pixmap)
+                painter.setPen(Qt.NoPen)
+                painter.setBrush(QColor(255, 255, 255))
+                painter.drawRect(0, 0, 24, 24)
+                painter.setBrush(r.color)
+                painter.drawEllipse(0, 0, 24, 24)
+                painter.end()
+                action.setIcon(QIcon(pixmap))
+
+                menu.addAction(action)
+
+            menu.exec_(self.mapToGlobal(event.pos()))
+
         else:
             # Update the selection.
             self.mouseMoveEvent(event)
