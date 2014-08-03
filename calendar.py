@@ -312,7 +312,7 @@ class ColorButton(QPushButton):
 
 class RangeDialog(QDialog):
 
-    def __init__(self, app, parent=None):
+    def __init__(self, app, r, parent=None):
         super(RangeDialog, self).__init__(parent)
         self.app = app
 
@@ -320,22 +320,29 @@ class RangeDialog(QDialog):
 
         layout.addWidget(QLabel("Farbe:"), 0, 0)
         self.colorBox = ColorButton()
+        self.colorBox.setColor(r.color)
         layout.addWidget(self.colorBox, 0, 1, Qt.AlignLeft)
 
         layout.addWidget(QLabel("Titel:"), 1, 0)
         self.titleBox = QLineEdit()
+        self.titleBox.setText(r.title)
         layout.addWidget(self.titleBox, 1, 1)
 
         layout.addWidget(QLabel("Von:"), 2, 0)
         self.startBox = QDateEdit()
+        self.startBox.setDisplayFormat("dd.MM.yyyy")
+        self.startBox.setDate(r.start)
         layout.addWidget(self.startBox, 2, 1, Qt.AlignLeft)
 
         layout.addWidget(QLabel("Bis:"), 3, 0)
         self.endBox = QDateEdit()
+        self.endBox.setDisplayFormat("dd.MM.yyyy")
+        self.endBox.setDate(r.end)
         layout.addWidget(self.endBox, 3, 1, Qt.AlignLeft)
 
         layout.addWidget(QLabel("Notizen:"), 4, 0)
         self.notesBox = QTextEdit()
+        self.notesBox.setText(r.notes)
         layout.addWidget(self.notesBox, 4, 1)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
@@ -583,9 +590,8 @@ class MainWindow(QMainWindow):
         r = Range()
         r.start = self.calendar.selectionStart()
         r.end = self.calendar.selectionEnd()
-        dialog = RangeDialog(self.app, self)
+        dialog = RangeDialog(self.app, r, self)
         dialog.show()
-        #self.calendar.model.commit(r)
 
     def askClose(self):
         if not self.model.modified:
