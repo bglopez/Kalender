@@ -275,23 +275,66 @@ class Application(QApplication):
         self.settings = QSettings("Injoy Osterode", "Calendar")
 
 
+class ColorButton(QPushButton):
+
+    def __init__(self, color=QColor(), parent=None):
+        super(ColorButton, self).__init__(parent)
+        self.clicked.connect(self.onClicked)
+        self.setDialogTitle(u"Farbe wählen")
+        self.setColor(color)
+
+    def setColor(self, color):
+        self._color = QColor(color)
+        self.setText(color.name())
+
+        pixmap = QPixmap(24, 24)
+        painter = QPainter(pixmap)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(QBrush(color))
+        painter.drawRect(0, 0, 24, 24)
+        painter.end()
+        self.setIcon(QIcon(pixmap))
+
+    def color(self):
+        return self._color
+
+    def dialogTitle(self):
+        return self._dialogTitle
+
+    def setDialogTitle(self, dialogTitle):
+        self._dialogTitle = dialogTitle
+
+    def onClicked(self):
+        color = QColorDialog.getColor(self.color(), self, self.dialogTitle())
+        if color.isValid():
+            self.setColor(color)
+
+
 class RangeDialog(QDialog):
 
     def __init__(self, app, parent=None):
         super(RangeDialog, self).__init__(parent)
         self.app = app
 
-        layout = QGridLayout(self)
+        layout = QFormLayout(self)
 
-        layout.addWidget(QLabel("Farbe:"), 0, 0, Qt.AlignRight)
+        self.colorBox = ColorButton()
+        layout.addRow("Farbe:", self.colorBox)
 
-        layout.addWidget(QLabel("Titel:"), 1, 0, Qt.AlignRight)
+        self.titleBox = QLineEdit()
+        layout.addRow("Titel:", self.titleBox)
 
-        layout.addWidget(QLabel("Von:"), 2, 0, Qt.AlignRight)
+        self.startBox = QDateEdit()
+        layout.addRow("Von:", self.startBox)
 
-        layout.addWidget(QLabel("Bis:"), 3, 0, Qt.AlignRight)
+        self.endBox = QDateEdit()
+        layout.addRow("Bis:", self.endBox)
 
-        layout.addWidget(QLabel("Notizen:"), 4, 0, Qt.AlignRight)
+        self.notesBox = QTextEdit()
+        layout.addRow("Notizen:", self.notesBox)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        layout.addRow(buttons)
 
 
 class MainWindow(QMainWindow):
@@ -535,9 +578,9 @@ class MainWindow(QMainWindow):
         r = Range()
         r.start = self.calendar.selectionStart()
         r.end = self.calendar.selectionEnd()
-        #dialog = RangeDialog(self.app, self)
-        #dialog.show()
-        self.calendar.model.commit(r)
+        dialog = RangeDialog(self.app, self)
+        dialog.show()
+        #self.calendar.model.commit(r)
 
     def askClose(self):
         if not self.model.modified:
