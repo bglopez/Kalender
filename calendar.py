@@ -183,6 +183,8 @@ class Model(QObject):
         restoreAction = self.ranges[action.index]
         self.redoStack.append(restoreAction)
 
+        self.ranges[action.index] = action.copy()
+
         self.modelChanged.emit()
 
     def redo(self):
@@ -193,6 +195,8 @@ class Model(QObject):
 
         restoreAction = self.ranges[action.index]
         self.undoStack.append(restoreAction)
+
+        self.ranges[action.index] = action.copy()
 
         self.modelChanged.emit()
 
