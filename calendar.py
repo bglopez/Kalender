@@ -13,6 +13,7 @@ import sys
 import os
 import random
 import json
+import itertools
 
 
 MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
@@ -127,7 +128,7 @@ class Range(object):
         self.notes = ""
         self.start = QDate().currentDate()
         self.end = QDate().currentDate()
-        self.color = QColor(random.randint(0, 255), random.randint(0, 255),  random.randint(0, 255))
+        self.color = QColor()
 
     def copy(self):
         r = Range()
@@ -153,13 +154,11 @@ class Model(QObject):
         self.undoStack = [ ]
         self.redoStack = [ ]
 
+    def nextId(self):
+        return max(itertools.chain(self.ranges.keys(), [0]))
+
     def commit(self, r):
-        i = r.index
-        if not i:
-            if not self.ranges:
-                i = 1
-            else:
-                i = max(self.ranges.keys()) + 1
+        i = r.index if r.index else self.nextId()
 
         if i in self.ranges:
             restoreAction = self.ranges[i]
@@ -590,6 +589,10 @@ class MainWindow(QMainWindow):
         r = Range()
         r.start = self.calendar.selectionStart()
         r.end = self.calendar.selectionEnd()
+        r.color = QColor.fromHsvF(
+            (GOLDEN_RATIO_CONJUGATE * (self.model.nextId() + random.randint(0, 5))) % 1,
+            0.95, 0.5)
+
         dialog = RangeDialog(self.app, r, self)
         dialog.show()
 
