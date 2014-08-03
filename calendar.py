@@ -1035,9 +1035,6 @@ class CalendarWidget(QWidget):
     def dayForY(self, month, y):
         return max(1, min((y - 40 - 20) // self.rowHeight + 1, days_of_month(month)))
 
-    def mouseDoubleClickEvent(self, event):
-        self.onNewClicked()
-
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:
             return
