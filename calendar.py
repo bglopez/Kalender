@@ -380,6 +380,7 @@ class MainWindow(QMainWindow):
 
     def initWidget(self):
         self.calendar = CalendarWidget(self.app, self)
+        self.calendar.createClicked.connect(self.onCreateAction)
         self.setCentralWidget(self.calendar)
 
     def restoreSettings(self):
@@ -590,6 +591,8 @@ MOUSE_DOWN_NEW = 6
 
 class CalendarWidget(QWidget):
 
+    createClicked = Signal()
+
     def __init__(self, app, parent=None):
         super(CalendarWidget, self).__init__(parent)
         self.app = app
@@ -654,7 +657,7 @@ class CalendarWidget(QWidget):
         self.animationEnabled = True
 
     def onNewClicked(self):
-        print "New!"
+        self.createClicked.emit()
 
     def onAnimate(self, value):
         if not self.animationEnabled:
@@ -830,7 +833,7 @@ class CalendarWidget(QWidget):
         from_month = (start.year() - 1900) * 12 + start.month() - 1
         from_day = start.day()
 
-        to_month = (end.year() - 1900) * 12 + start.month() - 1
+        to_month = (end.year() - 1900) * 12 + end.month() - 1
         to_day = end.day()
 
 
