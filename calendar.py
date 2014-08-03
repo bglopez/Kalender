@@ -281,10 +281,9 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Kalender")
 
-        self.modified = True
         self.model = None
         self.setModel(Model())
-        self.path = "test.json"
+        self.path = None
 
     def setModel(self, model):
         if self.model:
@@ -433,13 +432,16 @@ class MainWindow(QMainWindow):
             return self.onSaveAsAction()
         else:
             self.model.save(self.path)
-
-        return True
+            return True
 
     def onSaveAsAction(self):
-        self.path = None # TODO: Dialog
-        self.model.save(self.path)
-        return True
+        path, _ = QFileDialog.getSaveFileName(self, "Kalender speichern", self.path, "Jahreskalender (*.json)")
+        if path:
+            self.path = path
+            self.model.save(self.path)
+            return True
+        else:
+            return False
 
     def onNewAction(self):
         if self.askClose():
@@ -448,8 +450,10 @@ class MainWindow(QMainWindow):
 
     def onOpenAction(self):
         if self.askClose():
-            self.path = None # TODO: Dialog
-            self.setModel(Model.load(self.path))
+            path, _ = QFileDialog.getOpenFileName(self, u"Kalender öffnen", self.path, "Jahrekalender (*.json)")
+            if path:
+                self.path = path
+                self.setModel(Model.load(self.path))
 
     def onHolidaysToggled(self, checked):
         self.holidayOverlay.enabled = checked
