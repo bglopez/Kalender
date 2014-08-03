@@ -122,6 +122,7 @@ class Application(QApplication):
 
         self.initColors()
         self.initResources()
+        self.initSettings()
 
     def initColors(self):
         self.white = QColor(255, 255, 255)
@@ -143,6 +144,9 @@ class Application(QApplication):
         self.newPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "new.png"))
         self.newDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "new-down.png"))
 
+    def initSettings(self):
+        self.settings = QSettings("Injoy Osterode", "Calendar")
+
 
 class MainWindow(QMainWindow):
 
@@ -154,6 +158,8 @@ class MainWindow(QMainWindow):
         self.initOverlays()
         self.initActions()
         self.initMenu()
+
+        self.restoreSettings()
 
         self.setWindowTitle("Kalender")
 
@@ -235,6 +241,10 @@ class MainWindow(QMainWindow):
         self.calendar = CalendarWidget(self.app, self)
         self.setCentralWidget(self.calendar)
 
+    def restoreSettings(self):
+        self.restoreGeometry(self.app.settings.value("geometry"))
+        self.restoreState(self.app.settings.value("state"))
+
     def onAboutAction(self):
         QMessageBox.about(
             self,
@@ -289,6 +299,8 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         if self.askClose():
+            self.app.settings.setValue("geometry", self.saveGeometry())
+            self.app.settings.setValue("windowState", self.saveState())
             event.accept()
         else:
             event.ignore()
