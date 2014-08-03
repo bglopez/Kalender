@@ -379,12 +379,12 @@ class RangeDialog(QDialog):
             return
 
         normalized = title.strip().lower()
-        if not normalized:
+        if len(normalized) <= 3:
             return
 
         for key in self.parent.model.ranges:
             r = self.parent.model.ranges[key]
-            if normalized in r.title.lower():
+            if r.title.lower().startswith(normalized):
                 self.colorBox.setColor(r.color)
                 break
 
