@@ -209,6 +209,7 @@ class Model(QObject):
 
     @classmethod
     def load(cls, path):
+        print "loading", path
         model = Model()
         # TODO: Load
         return model
@@ -277,13 +278,13 @@ class MainWindow(QMainWindow):
         self.initActions()
         self.initMenu()
 
-        self.restoreSettings()
-
-        self.setWindowTitle("Kalender")
-
         self.model = None
         self.setModel(Model())
         self.path = None
+
+        self.restoreSettings()
+
+        self.setWindowTitle("Kalender")
 
     def setModel(self, model):
         if self.model:
@@ -414,6 +415,13 @@ class MainWindow(QMainWindow):
         self.holidaysClausthalOverlay.enabled = bool(int(self.app.settings.value("holidaysClausthal", "0")))
         self.holidaysClausthalAction.setChecked(self.holidaysClausthalOverlay.enabled)
 
+        # Load most recent file.
+        if self.app.settings.value("path"):
+            try:
+                self.setModel(Model.load(self.app.settings.value("path")))
+            except e:
+                print e
+
     def onAboutAction(self):
         QMessageBox.about(
             self,
@@ -514,6 +522,12 @@ class MainWindow(QMainWindow):
             self.app.settings.setValue("holidays", str(int(self.holidayOverlay.enabled)))
             self.app.settings.setValue("ferienNiedersachsen", str(int(self.ferienNiedersachsenOverlay.enabled)))
             self.app.settings.setValue("holidaysClausthal", str(int(self.holidaysClausthalOverlay.enabled)))
+
+            if self.path:
+                self.app.settings.setValue("path", self.path)
+            else:
+                self.app.settings.remove("path")
+
             event.accept()
         else:
             event.ignore()
