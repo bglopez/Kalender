@@ -1266,10 +1266,10 @@ class CalendarWidget(QWidget):
                 action.setData(r.index)
 
                 pixmap = QPixmap(24, 24)
+		pixmap.fill(Qt.transparent)
                 painter = QPainter(pixmap)
+		painter.setRenderHint(QPainter.Antialiasing)
                 painter.setPen(Qt.NoPen)
-                painter.setBrush(QColor(255, 255, 255))
-                painter.drawRect(0, 0, 24, 24)
                 painter.setBrush(r.color)
                 painter.drawEllipse(0, 0, 24, 24)
                 painter.end()
