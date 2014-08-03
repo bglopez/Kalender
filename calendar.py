@@ -11,6 +11,7 @@ from PySide.QtGui import *
 import datetime
 import sys
 import os
+import random
 
 
 MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
@@ -123,9 +124,20 @@ class Range(object):
         self.deleted = False
         self.title = ""
         self.notes = ""
-        self.start = QDate(2014, 8, 3)
-        self.end = QDate(2014, 8, 4)
-        self.color = QColor(0, 255, 0)
+        self.start = QDate().currentDate()
+        self.end = QDate().currentDate()
+        self.color = QColor(random.randint(0, 255), random.randint(0, 255),  random.randint(0, 255))
+
+    def copy(self):
+        r = Range()
+        r.index = self.index
+        r.deleted = self.deleted
+        r.title = self.title
+        r.notes = self.notes
+        r.start = self.start
+        r.end = self.end
+        r.color = self.color
+        return r
 
 
 class Model(QObject):
@@ -136,6 +148,51 @@ class Model(QObject):
         super(Model, self).__init__()
         self.ranges = { }
         self.ranges[1] = Range()
+
+        self.undo = [ ]
+        self.redo = [ ]
+
+    def commit(self, r):
+        if r.index and r.index in self.ranges:
+            restoreAction = self.ranges[r.index]
+            self.undo.append(restoreAction)
+        else:
+            deleteAction = Range()
+            deleteAction.index = r.index
+            deleteAction.deleted = True
+            self.undo.append(deleteAction)
+
+        i = r.index
+        if not i:
+            i = max(self.ranges.keys()) + 1
+
+        self.ranges[i] = r.copy()
+        self.ranges[i].index = i
+        self.redo = []
+
+        self.modelChanged.emit()
+
+    def undo(self):
+        if not self.undo:
+            return
+
+        action = self.undo.pop()
+
+        restoreAction = self.ranges[action.index]
+        self.redo.append(restoreAction)
+
+        self.modelChanged.emit()
+
+    def redo(self):
+        if not self.redo:
+            return
+
+        action = self.redo.pop()
+
+        restoreAction = self.ranges[action.index]
+        self.undo.append(restoreAction)
+
+        self.modelChanged.emit()
 
 
 class Application(QApplication):
@@ -171,6 +228,25 @@ class Application(QApplication):
         self.settings = QSettings("Injoy Osterode", "Calendar")
 
 
+class RangeDialog(QDialog):
+
+    def __init__(self, app, parent=None):
+        super(RangeDialog, self).__init__(parent)
+        self.app = app
+
+        layout = QGridLayout(self)
+
+        layout.addWidget(QLabel("Farbe:"), 0, 0, Qt.AlignRight)
+
+        layout.addWidget(QLabel("Titel:"), 1, 0, Qt.AlignRight)
+
+        layout.addWidget(QLabel("Von:"), 2, 0, Qt.AlignRight)
+
+        layout.addWidget(QLabel("Bis:"), 3, 0, Qt.AlignRight)
+
+        layout.addWidget(QLabel("Notizen:"), 4, 0, Qt.AlignRight)
+
+
 class MainWindow(QMainWindow):
 
     def __init__(self, app):
@@ -186,7 +262,6 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Kalender")
 
-        self.model = Model()
         self.modified = True
         self.path = "test.json"
 
@@ -214,6 +289,10 @@ class MainWindow(QMainWindow):
 
         self.closeAction = QAction(u"Schließen", self)
         self.closeAction.triggered.connect(self.onCloseAction)
+
+        self.createAction = QAction("Eintrag erstellen", self)
+        self.createAction.setShortcut("Ctrl+N")
+        self.createAction.triggered.connect(self.onCreateAction)
 
         self.leftAction = QAction(u"Jahr zurück", self)
         self.leftAction.triggered.connect(self.calendar.onLeftClicked)
@@ -256,6 +335,10 @@ class MainWindow(QMainWindow):
         fileMenu.addSeparator()
         fileMenu.addAction(self.closeAction)
 
+        editMenu = self.menuBar().addMenu("Bearbeiten")
+        editMenu.addSeparator()
+        editMenu.addAction(self.createAction)
+
         viewMenu = self.menuBar().addMenu("Ansicht")
         viewMenu.addAction(self.leftAction)
         viewMenu.addAction(self.todayAction)
@@ -268,7 +351,6 @@ class MainWindow(QMainWindow):
         infoMenu = self.menuBar().addMenu("Info")
         infoMenu.addAction(self.aboutAction)
         infoMenu.addAction(self.aboutQtAction)
-
 
     def initWidget(self):
         self.calendar = CalendarWidget(self.app, self)
@@ -324,6 +406,11 @@ class MainWindow(QMainWindow):
     def onHolidaysClausthalToggled(self, checked):
         self.holidaysClausthalOverlay.enabled = checked
         self.calendar.repaint()
+
+    def onCreateAction(self):
+        #dialog = RangeDialog(self.app, self)
+        #dialog.show()
+        self.calendar.model.commit(Range())
 
     def askClose(self):
         if not self.modified:
@@ -474,7 +561,8 @@ class CalendarWidget(QWidget):
         self.offset = self.targetOffset
 
         self.overlays = [ ]
-        self.model = Model()
+        self.model = None
+        self.setModel(Model())
 
         self.selection_end = QDate.currentDate()
         self.selection_start = self.selection_end
@@ -485,6 +573,12 @@ class CalendarWidget(QWidget):
         self.animation.valueChanged.connect(self.onAnimate)
         self.animation.setDuration(1000)
         self.animationEnabled = False
+
+    def setModel(self, model):
+        if self.model:
+            self.model.modelChanged.disconnect(self.update)
+        self.model = model
+        self.model.modelChanged.connect(self.update)
 
     def onLeftClicked(self):
         self.animationEnabled = False
