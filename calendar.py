@@ -909,11 +909,10 @@ class CalendarWidget(QWidget):
             painter.restore()
 
         painter.save()
-        self.latest_range_offset = 0.0
         for key in sorted(self.model.ranges):
             r = self.model.ranges[key]
             if not r.deleted:
-                self.drawRange(painter, r.start, r.end, r.color)
+                self.drawRange(painter, (GOLDEN_RATIO_CONJUGATE * r.index) % 1, r.start, r.end, r.color)
         painter.restore()
 
         # Mark current day.
@@ -922,16 +921,12 @@ class CalendarWidget(QWidget):
         x = (month - self.offset) * self.columnWidth
         self.drawRaisedRect(painter, QRect(x, 40 + 20 + (now.day - 1) * self.rowHeight, self.columnWidth, self.rowHeight), self.app.red)
 
-    def drawRange(self, painter, start, end, color):
+    def drawRange(self, painter, iterated_golden_ratio, start, end, color):
         from_month = (start.year() - 1900) * 12 + start.month() - 1
         from_day = start.day()
 
         to_month = (end.year() - 1900) * 12 + end.month() - 1
         to_day = end.day()
-
-
-        self.latest_range_offset += GOLDEN_RATIO_CONJUGATE
-        self.latest_range_offset %= 1
 
         radius = max(6, min(self.rowHeight * 0.5, self.columnWidth * 0.25) - 2)
 
@@ -942,7 +937,7 @@ class CalendarWidget(QWidget):
         to_y = 40 + 20 + self.rowHeight * (to_day - 0.5)
 
         for month in range(from_month, to_month + 1):
-            x = (month - self.offset) * self.columnWidth + self.columnWidth * self.latest_range_offset
+            x = (month - self.offset) * self.columnWidth + self.columnWidth * iterated_golden_ratio
 
             if month == from_month:
                 painter.drawEllipse(QPoint(x, from_y), radius, radius)
