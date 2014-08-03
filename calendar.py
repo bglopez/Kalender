@@ -412,8 +412,14 @@ class HolidaysClausthal(HolidayOverlay):
 
         if year in (2014, 2015):
             match |= QDate(2014, 6, 7) < date < QDate(2014, 6, 16) # Pfingsten
-            match |= QDate(2014, 7, 26) < date < QDate(2014, 10, 1) # Sommer
+            match |= QDate(2014, 7, 26) < date < QDate(2014, 10, 1) # Semester
             match |= QDate(2014, 12, 20) < date < QDate(2015, 1, 5) # Weihnachten
+
+        if year in (2015, 2016):
+            match |= QDate(2015, 2, 7) < date < QDate(2015, 4, 13) # Semester
+            match |= QDate(2015, 5, 23) < date < QDate(2015, 6, 1) # Pfingsten
+            match |= QDate(2015, 7, 25) < date < QDate(2015, 10, 26) # Semester
+            match |= QDate(2015, 12, 19) < date < QDate(2016, 1, 4) # Winter
 
         return match
 
