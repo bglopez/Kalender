@@ -701,7 +701,7 @@ class CalendarWidget(QWidget):
     def mouseReleaseEvent(self, event):
         repaint = False
 
-        if event.button() == Qt.RightButton:
+        if event.button() == Qt.RightButton and 40 + 20 < event.y():
             # Handle right clicks.
             month = self.monthForX(event.x())
             date = qdate(month, self.dayForY(month, event.y()))
