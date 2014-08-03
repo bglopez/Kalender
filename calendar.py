@@ -323,7 +323,7 @@ class RangeDialog(QDialog):
         else:
             self.setWindowTitle("Neuer Eintrag")
 
-        self.colorExplicit = False
+        self.colorExplicit = bool(r.index)
 
         layout = QGridLayout(self)
 
@@ -336,6 +336,7 @@ class RangeDialog(QDialog):
         layout.addWidget(QLabel("Titel:"), 1, 0)
         self.titleBox = QLineEdit()
         self.titleBox.setText(r.title)
+        self.titleBox.textChanged.connect(self.onTitleChanged)
         layout.addWidget(self.titleBox, 1, 1)
 
         layout.addWidget(QLabel("Von:"), 2, 0)
@@ -364,6 +365,20 @@ class RangeDialog(QDialog):
         buttons.rejected.connect(self.reject)
         buttons.accepted.connect(self.onSave)
         layout.addWidget(buttons, 5, 1)
+
+    def onTitleChanged(self, title):
+        if self.colorExplicit:
+            return
+
+        normalized = title.strip().lower()
+        if not normalized:
+            return
+
+        for key in self.parent.model.ranges:
+            r = self.parent.model.ranges[key]
+            if normalized in r.title.lower():
+                self.colorBox.setColor(r.color)
+                break
 
     def onColorClicked(self):
         self.colorExplicit = True
