@@ -316,25 +316,30 @@ class RangeDialog(QDialog):
         super(RangeDialog, self).__init__(parent)
         self.app = app
 
-        layout = QFormLayout(self)
+        layout = QGridLayout(self)
 
+        layout.addWidget(QLabel("Farbe:"), 0, 0)
         self.colorBox = ColorButton()
-        layout.addRow("Farbe:", self.colorBox)
+        layout.addWidget(self.colorBox, 0, 1, Qt.AlignLeft)
 
+        layout.addWidget(QLabel("Titel:"), 1, 0)
         self.titleBox = QLineEdit()
-        layout.addRow("Titel:", self.titleBox)
+        layout.addWidget(self.titleBox, 1, 1)
 
+        layout.addWidget(QLabel("Von:"), 2, 0)
         self.startBox = QDateEdit()
-        layout.addRow("Von:", self.startBox)
+        layout.addWidget(self.startBox, 2, 1, Qt.AlignLeft)
 
+        layout.addWidget(QLabel("Bis:"), 3, 0)
         self.endBox = QDateEdit()
-        layout.addRow("Bis:", self.endBox)
+        layout.addWidget(self.endBox, 3, 1, Qt.AlignLeft)
 
+        layout.addWidget(QLabel("Notizen:"), 4, 0)
         self.notesBox = QTextEdit()
-        layout.addRow("Notizen:", self.notesBox)
+        layout.addWidget(self.notesBox, 4, 1)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
-        layout.addRow(buttons)
+        layout.addWidget(buttons, 5, 0, 1, 2)
 
 
 class MainWindow(QMainWindow):
