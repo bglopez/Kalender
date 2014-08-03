@@ -444,9 +444,12 @@ class MainWindow(QMainWindow):
         self.redoAction.setEnabled(bool(self.calendar.model.redoStack))
 
     def onCreateAction(self):
+        r = Range()
+        r.start = self.calendar.selectionStart()
+        r.end = self.calendar.selectionEnd()
         #dialog = RangeDialog(self.app, self)
         #dialog.show()
-        self.calendar.model.commit(Range())
+        self.calendar.model.commit(r)
 
     def askClose(self):
         if not self.modified:
