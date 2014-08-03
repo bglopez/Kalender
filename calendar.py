@@ -150,9 +150,9 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.app = app
 
+        self.initWidget()
         self.initActions()
         self.initMenu()
-        self.initWidget()
 
         self.setWindowTitle("Kalender")
 
@@ -174,6 +174,15 @@ class MainWindow(QMainWindow):
         self.closeAction = QAction(u"Schließen", self)
         self.closeAction.triggered.connect(self.onCloseAction)
 
+        self.leftAction = QAction(u"Jahr zurück", self)
+        self.leftAction.triggered.connect(self.calendar.onLeftClicked)
+
+        self.todayAction = QAction("Heute", self)
+        self.todayAction.triggered.connect(self.calendar.onTodayClicked)
+
+        self.rightAction = QAction("Jahr vor", self)
+        self.rightAction.triggered.connect(self.calendar.onRightClicked)
+
         self.aboutAction = QAction(u"Über ...", self)
         self.aboutAction.triggered.connect(self.onAboutAction)
         self.aboutAction.setShortcut("F1")
@@ -190,6 +199,11 @@ class MainWindow(QMainWindow):
         fileMenu.addAction(self.saveAsAction)
         fileMenu.addSeparator()
         fileMenu.addAction(self.closeAction)
+
+        viewMenu = self.menuBar().addMenu("Ansicht")
+        viewMenu.addAction(self.leftAction)
+        viewMenu.addAction(self.todayAction)
+        viewMenu.addAction(self.rightAction)
 
         infoMenu = self.menuBar().addMenu("Info")
         infoMenu.addAction(self.aboutAction)
