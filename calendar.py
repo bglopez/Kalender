@@ -519,6 +519,7 @@ class MainWindow(QMainWindow):
     def initWidget(self):
         self.calendar = CalendarWidget(self.app, self)
         self.calendar.createClicked.connect(self.onCreateAction)
+        self.calendar.actions.triggered.connect(self.onCalendarAction)
         self.setCentralWidget(self.calendar)
 
     def restoreSettings(self):
@@ -634,6 +635,13 @@ class MainWindow(QMainWindow):
         r.color = QColor.fromHsvF(
             (GOLDEN_RATIO_CONJUGATE * self.model.nextId()) % 1,
             0.95, 0.5)
+
+        dialog = RangeDialog(self.app, r, self)
+        dialog.show()
+
+    def onCalendarAction(self, action):
+        index = action.data()
+        r = self.model.ranges[index]
 
         dialog = RangeDialog(self.app, r, self)
         dialog.show()
