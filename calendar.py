@@ -1178,7 +1178,11 @@ class CalendarWidget(QWidget):
         return max(1, min((y - 40 - 20) // self.rowHeight + 1, days_of_month(month)))
 
     def mouseDoubleClickEvent(self, event):
-        self.onNewClicked()
+        self.loadContextActions()
+        if len(self.actions.actions()):
+            self.showContextMenu(event.pos())
+        else:
+            self.onNewClicked()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:
@@ -1231,6 +1235,51 @@ class CalendarWidget(QWidget):
             self.selection_end = qdate(month, self.dayForY(month, event.y()))
             self.update()
 
+    def loadContextActions(self):
+        # Clear.
+        while self.actions.actions():
+            self.actions.removeAction(self.actions.actions()[0])
+
+        # Fill action group with entries in the selection.
+        for key in sorted(self.model.ranges):
+            r = self.model.ranges[key]
+            if r.deleted:
+                continue
+
+            if r.end < self.selectionStart():
+                continue
+            if r.start > self.selectionEnd():
+                continue
+
+            if r.title:
+                action = self.actions.addAction(r.title)
+            else:
+                action = self.actions.addAction("Eintrag %d" % r.index)
+
+            action.setData(r.index)
+
+            pixmap = QPixmap(24, 24)
+            pixmap.fill(Qt.transparent)
+            painter = QPainter(pixmap)
+            painter.setRenderHint(QPainter.Antialiasing)
+            painter.setPen(Qt.NoPen)
+            painter.setBrush(r.color)
+            painter.drawEllipse(0, 0, 24, 24)
+            painter.end()
+            action.setIcon(QIcon(pixmap))
+
+    def showContextMenu(self, pos):
+        menu = QMenu()
+        action = menu.addAction("Neuer Eintrag")
+        action.triggered.connect(self.onNewClicked)
+
+        if len(self.actions.actions()):
+            menu.addSeparator()
+            for action in self.actions.actions():
+                menu.addAction(action)
+
+        menu.exec_(self.mapToGlobal(pos))
+
     def mouseReleaseEvent(self, event):
         repaint = False
 
@@ -1245,42 +1294,8 @@ class CalendarWidget(QWidget):
                 repaint = True
 
             # Open context menu.
-            menu = QMenu()
-            action = menu.addAction("Neuer Eintrag")
-            action.triggered.connect(self.onNewClicked)
-            menu.addSeparator()
-            while self.actions.actions():
-                self.actions.removeAction(self.actions.actions()[0])
-            for key in sorted(self.model.ranges):
-                r = self.model.ranges[key]
-                if r.deleted:
-                    continue
-                if r.end < self.selectionStart():
-                    continue
-                if r.start > self.selectionEnd():
-                    continue
-
-                if r.title:
-                    action = self.actions.addAction(r.title)
-                else:
-                    action = self.actions.addAction("Eintrag %d" % r.index)
-
-                action.setData(r.index)
-
-                pixmap = QPixmap(24, 24)
-                pixmap.fill(Qt.transparent)
-                painter = QPainter(pixmap)
-                painter.setRenderHint(QPainter.Antialiasing)
-                painter.setPen(Qt.NoPen)
-                painter.setBrush(r.color)
-                painter.drawEllipse(0, 0, 24, 24)
-                painter.end()
-                action.setIcon(QIcon(pixmap))
-
-                menu.addAction(action)
-
-            menu.exec_(self.mapToGlobal(event.pos()))
-
+            self.loadContextActions()
+            self.showContextMenu(event.pos())
         else:
             # Update the selection.
             self.mouseMoveEvent(event)
