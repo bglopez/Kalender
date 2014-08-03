@@ -12,6 +12,7 @@ import datetime
 import sys
 import os
 import random
+import json
 
 
 MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
@@ -204,7 +205,21 @@ class Model(QObject):
         self.modelChanged.emit()
 
     def save(self, path):
-        pass # TODO: Save
+        document = { }
+        for key in self.ranges:
+            r = self.ranges[key]
+            if not r.deleted:
+                document[r.index] = {
+                    "title": r.title,
+                    "notes": r.notes,
+                    "start": r.start.toString(Qt.ISODate),
+                    "end": r.end.toString(Qt.ISODate),
+                    "color": r.color.name(),
+                }
+
+        with open(path, "w") as handle:
+            json.dump(document, handle)
+
         self.modified = False
 
     @classmethod
@@ -419,7 +434,7 @@ class MainWindow(QMainWindow):
         if self.app.settings.value("path"):
             try:
                 self.setModel(Model.load(self.app.settings.value("path")))
-            except e:
+            except Exception, e:
                 print e
 
     def onAboutAction(self):
@@ -439,15 +454,28 @@ class MainWindow(QMainWindow):
         if not self.path:
             return self.onSaveAsAction()
         else:
-            self.model.save(self.path)
-            return True
+            try:
+                self.model.save(self.path)
+                return True
+            except Exception, e:
+                # TODO: Error
+                print e
+                return False
 
     def onSaveAsAction(self):
         path, _ = QFileDialog.getSaveFileName(self, "Kalender speichern", self.path, "Jahreskalender (*.json)")
         if path:
+            if not path.endswith(".json"):
+                path += ".json"
+
             self.path = path
-            self.model.save(self.path)
-            return True
+            try:
+                self.model.save(self.path)
+                return True
+            except Exception, e:
+                # TODO Error
+                print e
+                return False
         else:
             return False
 
@@ -460,8 +488,13 @@ class MainWindow(QMainWindow):
         if self.askClose():
             path, _ = QFileDialog.getOpenFileName(self, u"Kalender öffnen", self.path, "Jahrekalender (*.json)")
             if path:
-                self.path = path
-                self.setModel(Model.load(self.path))
+                try:
+                    self.setModel(Model.load(self.path))
+                    self.path = path
+                except Exception, e:
+                    # TODO Error
+                    print e
+                    return False
 
     def onHolidaysToggled(self, checked):
         self.holidayOverlay.enabled = checked
