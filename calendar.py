@@ -310,7 +310,7 @@ class ColorButton(QPushButton):
 
 class RangeDialog(QDialog):
 
-    def __init__(self, app, r, parent=None):
+    def __init__(self, app, r, parent):
         super(RangeDialog, self).__init__(parent)
         self.app = app
         self.r = r
@@ -354,6 +354,7 @@ class RangeDialog(QDialog):
         layout.addWidget(self.notesBox, 4, 1)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        buttons.rejected.connect(self.reject)
         buttons.accepted.connect(self.onSave)
         layout.addWidget(buttons, 5, 0, 1, 2)
 
