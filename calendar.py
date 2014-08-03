@@ -259,6 +259,8 @@ class Application(QApplication):
         self.lightRed = QColor(242, 219, 219, 100)
 
     def initResources(self):
+        self.calendarIcon = QIcon(os.path.join(os.path.dirname(__file__), "calendar.ico"))
+
         self.leftPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "left.png"))
         self.leftDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "left-down.png"))
         self.rightPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "right.png"))
@@ -434,6 +436,7 @@ class MainWindow(QMainWindow):
         self.restoreSettings()
 
         self.setWindowTitle("Kalender")
+	self.setWindowIcon(self.app.calendarIcon)
 
     def setModel(self, model):
         if self.model:
