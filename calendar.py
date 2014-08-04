@@ -13,6 +13,7 @@ import sys
 import os
 import json
 import itertools
+import random
 
 
 MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
@@ -20,6 +21,18 @@ MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
 
 WEEKDAY_NAMES = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag",
                  "Freitag", "Samstag", "Sonntag"]
+
+
+SOLARIZED_COLORS = [
+    QColor("#b58900"), # Yellow
+    QColor("#cb4b16"), # Orange
+    QColor("#dc322f"), # Red
+    QColor("#d33682"), # Magenta
+    QColor("#6c71c4"), # Violet
+    QColor("#268bd2"), # Blue
+    QColor("#2aa198"), # Cyan
+    QColor("#859900"), # Green
+]
 
 
 GOLDEN_RATIO_CONJUGATE = 0.618033988749895
@@ -663,9 +676,7 @@ class MainWindow(QMainWindow):
         r = Range()
         r.start = self.calendar.selectionStart()
         r.end = self.calendar.selectionEnd()
-        r.color = QColor.fromHsvF(
-            (GOLDEN_RATIO_CONJUGATE * self.model.nextId()) % 1,
-            0.5, 0.8)
+        r.color = random.choice(SOLARIZED_COLORS)
 
         dialog = RangeDialog(self.app, r, self)
         dialog.show()
