@@ -23,7 +23,7 @@ WEEKDAY_NAMES = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag",
                  "Freitag", "Samstag", "Sonntag"]
 
 
-SOLARIZED_COLORS = [
+SOLARIZED_ACCENT_COLORS = [
     QColor("#b58900"), # Yellow
     QColor("#cb4b16"), # Orange
     QColor("#dc322f"), # Red
@@ -675,7 +675,7 @@ class MainWindow(QMainWindow):
         r = Range()
         r.start = self.calendar.selectionStart()
         r.end = self.calendar.selectionEnd()
-        r.color = random.choice(SOLARIZED_COLORS)
+        r.color = random.choice(SOLARIZED_ACCENT_COLORS)
 
         dialog = RangeDialog(self.app, r, self)
         dialog.show()
@@ -689,8 +689,8 @@ class MainWindow(QMainWindow):
 
     def askClose(self):
         while RangeDialog.dialogs:
-	    dialog = RangeDialog.dialogs.pop()
-	    dialog.close()
+            dialog = RangeDialog.dialogs.pop()
+            dialog.close()
 
         if not self.model.modified:
             return True
