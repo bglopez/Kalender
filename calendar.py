@@ -34,6 +34,10 @@ SOLARIZED_ACCENT_COLORS = [
     QColor("#859900"), # Green
 ]
 
+SHADOW_COLOR = QColor(0, 0, 0, 50)
+
+LIGHT_COLOR = QColor(255, 255, 255, 200)
+
 
 GOLDEN_RATIO_CONJUGATE = 0.618033988749895
 
@@ -263,8 +267,6 @@ class Application(QApplication):
         self.initSettings()
 
     def initColors(self):
-        self.shadow = QColor(0, 0, 0, 50)
-        self.light = QColor(255, 255, 255, 200)
         self.lightRed = QColor(242, 219, 219, 100)
 
     def initResources(self):
@@ -1111,7 +1113,7 @@ class CalendarWidget(QWidget):
         painter.drawRect(rect)
 
         # Draw inner shadow.
-        painter.setPen(QPen(self.app.shadow, 3))
+        painter.setPen(QPen(SHADOW_COLOR, 3))
         painter.drawLine(
             rect.x() + 6, rect.y() + 3,
             rect.x() + rect.width() - 4, rect.y() + 3)
@@ -1128,7 +1130,7 @@ class CalendarWidget(QWidget):
             rect.x() + rect.width() + 3, rect.y() + rect.height())
 
         # Draw highlight.
-        painter.setPen(QPen(self.app.light, 1))
+        painter.setPen(QPen(LIGHT_COLOR, 1))
         painter.drawLine(
             rect.x() - 2, rect.y() - 2,
             rect.x() + rect.width() + 1, rect.y() -2)
@@ -1137,7 +1139,7 @@ class CalendarWidget(QWidget):
             rect.x() - 2, rect.y() + rect.height() + 1)
 
         # Draw highlight shadow.
-        painter.setPen(QPen(self.app.shadow, 1))
+        painter.setPen(QPen(SHADOW_COLOR, 1))
         painter.drawLine(
             rect.x() - 2, rect.y() + rect.height() + 1,
             rect.x() + rect.width() + 1, rect.y() + rect.height() + 1)
