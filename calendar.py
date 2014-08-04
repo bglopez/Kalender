@@ -263,8 +263,6 @@ class Application(QApplication):
         self.initSettings()
 
     def initColors(self):
-        self.black = QColor(0, 0, 0)
-        self.gray = QColor(191, 191, 191)
         self.shadow = QColor(0, 0, 0, 50)
         self.light = QColor(255, 255, 255, 200)
         self.red = QColor(255, 0, 0)
@@ -1014,9 +1012,9 @@ class CalendarWidget(QWidget):
                 yStart = 40 + 20 + (day - 1) * self.rowHeight
                 yEnd = yStart + self.rowHeight
                 if date.dayOfWeek() == 7:
-                    painter.setPen(QPen(self.app.gray, 2))
+                    painter.setPen(QPen(Qt.gray, 2))
                 else:
-                    painter.setPen(QPen(self.app.gray))
+                    painter.setPen(QPen(Qt.gray))
                 painter.drawLine(x + 1, yEnd, x + self.columnWidth, yEnd)
 
                 # Draw overlays.
@@ -1052,14 +1050,14 @@ class CalendarWidget(QWidget):
             # Draw vertical lines.
             painter.save()
             if month % 12 == 0:
-                painter.setPen(QPen(self.app.gray))
+                painter.setPen(QPen(Qt.gray))
                 painter.drawLine(x - 2, 0, x - 2, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)) - 1)
                 painter.setPen(QPen(self.palette().window().color(), 2))
                 painter.drawLine(x, 0, x, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)))
-                painter.setPen(QPen(self.app.gray))
+                painter.setPen(QPen(Qt.gray))
                 painter.drawLine(x + 1, 0, x + 1, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)) - 1)
             else:
-                painter.setPen(QPen(self.app.gray))
+                painter.setPen(QPen(Qt.gray))
                 painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)) - 1)
             painter.restore()
 
