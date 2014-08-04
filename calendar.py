@@ -263,7 +263,6 @@ class Application(QApplication):
         self.initSettings()
 
     def initColors(self):
-        self.white = QColor(255, 255, 255)
         self.black = QColor(0, 0, 0)
         self.gray = QColor(191, 191, 191)
         self.shadow = QColor(0, 0, 0, 50)
@@ -747,7 +746,7 @@ class HolidayOverlay(object):
         pixmap = QPixmap(16, 16)
         painter = QPainter(pixmap)
         painter.setPen(Qt.NoPen)
-        painter.setBrush(QColor(255, 255, 255))
+        painter.setBrush(Qt.white)
         painter.drawRect(0, 0, 16, 16)
         painter.setBrush(self.brush)
         painter.drawRect(0, 0, 16, 16)
@@ -948,7 +947,7 @@ class CalendarWidget(QWidget):
 
         # Draw white background.
         for x, month in self.visibleMonths():
-            painter.fillRect(QRect(x, 40 + 20, self.columnWidth, days_of_month(month) * self.rowHeight), QBrush(self.app.white))
+            painter.fillRect(QRect(x, 40 + 20, self.columnWidth, days_of_month(month) * self.rowHeight), QBrush(Qt.white))
 
         for x, month in self.visibleMonths():
             # Draw year header.
