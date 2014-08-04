@@ -35,8 +35,12 @@ SOLARIZED_ACCENT_COLORS = [
 ]
 
 SHADOW_COLOR = QColor(0, 0, 0, 50)
+LIGHT_COLOR = QColor(255, 255, 255, 100)
 
-LIGHT_COLOR = QColor(255, 255, 255, 200)
+BLUE_LIGHT_COLOR = QColor(146, 197, 233, 100)
+GREEN_LIGHT_COLOR = QColor(194, 204, 128, 100)
+RED_LIGHT_COLOR = QColor(237, 152, 151, 100)
+YELLOW_LIGHT_COLOR = QColor(218, 196, 128, 100)
 
 
 GOLDEN_RATIO_CONJUGATE = 0.618033988749895
@@ -262,12 +266,8 @@ class Application(QApplication):
     def __init__(self, argv):
         super(Application, self).__init__(argv)
 
-        self.initColors()
         self.initResources()
         self.initSettings()
-
-    def initColors(self):
-        self.lightRed = QColor(242, 219, 219, 100)
 
     def initResources(self):
         self.calendarIcon = QIcon(os.path.join(os.path.dirname(__file__), "calendar.ico"))
@@ -732,7 +732,7 @@ class MainWindow(QMainWindow):
 
 class HolidayOverlay(object):
     def __init__(self, app):
-        self.brush = QBrush(app.lightRed)
+        self.brush = QBrush(RED_LIGHT_COLOR)
         self.enabled = True
 
     def matches(self, month, day):
@@ -755,7 +755,7 @@ class HolidayOverlay(object):
 
 class FerienNiedersachsen(HolidayOverlay):
     def __init__(self, app):
-        self.brush = QBrush(QColor(100, 200, 100, 50))
+        self.brush = QBrush(GREEN_LIGHT_COLOR)
         self.enabled = True
 
     def matches(self, month, day):
@@ -795,7 +795,7 @@ class FerienNiedersachsen(HolidayOverlay):
 
 class HolidaysClausthal(HolidayOverlay):
     def __init__(self, app):
-        self.brush = QBrush(QColor(255, 255, 0, 50))
+        self.brush = QBrush(YELLOW_LIGHT_COLOR)
         self.enabled = True
 
     def matches(self, month, day):
