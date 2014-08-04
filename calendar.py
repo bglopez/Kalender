@@ -34,6 +34,8 @@ SOLARIZED_ACCENT_COLORS = [
     QColor("#859900"), # Green
 ]
 
+SOLARIZED_BASE_COLOR = QColor(7, 54, 66)
+
 SHADOW_COLOR = QColor(0, 0, 0, 50)
 LIGHT_COLOR = QColor(255, 255, 255, 100)
 
@@ -1025,11 +1027,11 @@ class CalendarWidget(QWidget):
 
                 # Draw selection.
                 if self.inSelection(date):
-                    painter.fillRect(QRect(x, yStart, self.columnWidth + 1, self.rowHeight + 1), QColor(91, 91, 255, 50))
+                    painter.fillRect(QRect(x, yStart, self.columnWidth + 1, self.rowHeight + 1), BLUE_LIGHT_COLOR)
 
                 # Draw selection end.
                 if date == self.selection_end:
-                    painter.setPen(QPen(QColor(30, 30, 200), 2))
+                    painter.setPen(QPen(SOLARIZED_BASE_COLOR, 2))
                     painter.drawRect(QRect(x + 2, yStart + 2, self.columnWidth - 4, self.rowHeight - 4))
 
                 # Draw day numbers.
