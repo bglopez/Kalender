@@ -48,42 +48,9 @@ YELLOW_LIGHT_COLOR = QColor(255, 255, 0, 50)
 GOLDEN_RATIO_CONJUGATE = 0.618033988749895
 
 
-def is_leap_year(year):
-    if year % 4 != 0:
-        return False
-    elif year % 100 != 0:
-        return True
-    elif year % 400 != 0:
-        return False
-    else:
-        return True
-
 def days_of_month(month):
-    year = 1900 + month // 12
-    if month % 12 == 0:
-        return 31
-    elif month % 12 == 1:
-        return 29 if is_leap_year(year) else 28
-    elif month % 12 == 2:
-        return 31
-    elif month % 12 == 3:
-        return 30
-    elif month % 12 == 4:
-        return 31
-    elif month % 12 == 5:
-        return 30
-    elif month % 12 == 6:
-        return 31
-    elif month % 12 == 7:
-        return 31
-    elif month % 12 == 8:
-        return 30
-    elif month % 12 == 9:
-        return 31
-    elif month % 12 == 10:
-        return 30
-    else:
-        return 31
+    date = qdate(month, 1)
+    return date.daysInMonth()
 
 def qdate(month, day):
     return QDate(1900 + month // 12, month % 12 + 1, day)
