@@ -265,7 +265,6 @@ class Application(QApplication):
     def initColors(self):
         self.shadow = QColor(0, 0, 0, 50)
         self.light = QColor(255, 255, 255, 200)
-        self.red = QColor(255, 0, 0)
         self.lightRed = QColor(242, 219, 219, 100)
 
     def initResources(self):
@@ -1073,7 +1072,7 @@ class CalendarWidget(QWidget):
         now = datetime.date.today()
         month = (now.year - 1900) * 12 + now.month - 1
         x = (month - self.offset) * self.columnWidth
-        self.drawRaisedRect(painter, QRect(x, 40 + 20 + (now.day - 1) * self.rowHeight, self.columnWidth, self.rowHeight), self.app.red)
+        self.drawRaisedRect(painter, QRect(x, 40 + 20 + (now.day - 1) * self.rowHeight, self.columnWidth, self.rowHeight), Qt.red)
 
     def drawRange(self, painter, iterated_golden_ratio, start, end, color):
         from_month = (start.year() - 1900) * 12 + start.month() - 1
