@@ -239,7 +239,7 @@ class Application(QApplication):
         self.initSettings()
 
     def initResources(self):
-        self.calendarIcon = QIcon(os.path.join(os.path.dirname(__file__), "calendar.ico"))
+        self.calendarIcon = QIcon(os.path.join(os.path.dirname(__file__), "kalender.ico"))
 
         self.leftPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "left.png"))
         self.leftDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "left-down.png"))

@@ -10,6 +10,6 @@ End If
 Set Shortcut = Shell.CreateShortcut(Shell.SpecialFolders("Desktop") & "\Kalender.lnk")
 Shortcut.TargetPath = "C:\Python27\pythonw.exe"
 Shortcut.WorkingDirectory = Fso.GetAbsolutePathName(".")
-Shortcut.IconLocation = Fso.GetAbsolutePathName("calendar.ico")
-Shortcut.Arguments = """" & Fso.GetAbsolutePathName("calendar.pyc") & """"
+Shortcut.IconLocation = Fso.GetAbsolutePathName("kalender.ico")
+Shortcut.Arguments = """" & Fso.GetAbsolutePathName("kalender.pyc") & """"
 Shortcut.Save
