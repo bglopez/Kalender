@@ -1160,11 +1160,12 @@ class CalendarWidget(QWidget):
         return max(1, min((y - 40 - 20) // self.rowHeight + 1, days_of_month(month)))
 
     def mouseDoubleClickEvent(self, event):
-        self.loadContextActions()
-        if len(self.actions.actions()):
-            self.showContextMenu(event.pos())
-        else:
-            self.onNewClicked()
+        if 40 + 20 < event.y():
+            self.loadContextActions()
+            if len(self.actions.actions()):
+                self.showContextMenu(event.pos())
+            else:
+                self.onNewClicked()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:
