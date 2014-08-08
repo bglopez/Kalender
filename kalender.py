@@ -13,6 +13,7 @@ import sys
 import os
 import json
 import itertools
+import random
 
 
 MONTH_NAMES = ["Januar", "Februar", u"März", "April", "Mai", "Juni", "Juli",
@@ -22,45 +23,34 @@ WEEKDAY_NAMES = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag",
                  "Freitag", "Samstag", "Sonntag"]
 
 
+SOLARIZED_ACCENT_COLORS = [
+    QColor("#b58900"), # Yellow
+    QColor("#cb4b16"), # Orange
+    QColor("#dc322f"), # Red
+    QColor("#d33682"), # Magenta
+    QColor("#6c71c4"), # Violet
+    QColor("#268bd2"), # Blue
+    QColor("#2aa198"), # Cyan
+    QColor("#859900"), # Green
+]
+
+SOLARIZED_BASE_COLOR = QColor(7, 54, 66)
+
+SHADOW_COLOR = QColor(0, 0, 0, 50)
+LIGHT_COLOR = QColor(255, 255, 255, 100)
+
+BLUE_LIGHT_COLOR = QColor(146, 197, 233, 100)
+GREEN_LIGHT_COLOR = QColor(100, 219, 100, 50)
+RED_LIGHT_COLOR = QColor(242, 219, 219, 100)
+YELLOW_LIGHT_COLOR = QColor(255, 255, 0, 50)
+
+
 GOLDEN_RATIO_CONJUGATE = 0.618033988749895
 
 
-def is_leap_year(year):
-    if year % 4 != 0:
-        return False
-    elif year % 100 != 0:
-        return True
-    elif year % 400 != 0:
-        return False
-    else:
-        return True
-
 def days_of_month(month):
-    year = 1900 + month // 12
-    if month % 12 == 0:
-        return 31
-    elif month % 12 == 1:
-        return 29 if is_leap_year(year) else 28
-    elif month % 12 == 2:
-        return 31
-    elif month % 12 == 3:
-        return 30
-    elif month % 12 == 4:
-        return 31
-    elif month % 12 == 5:
-        return 30
-    elif month % 12 == 6:
-        return 31
-    elif month % 12 == 7:
-        return 31
-    elif month % 12 == 8:
-        return 30
-    elif month % 12 == 9:
-        return 31
-    elif month % 12 == 10:
-        return 30
-    else:
-        return 31
+    date = qdate(month, 1)
+    return date.daysInMonth()
 
 def qdate(month, day):
     return QDate(1900 + month // 12, month % 12 + 1, day)
@@ -245,21 +235,11 @@ class Application(QApplication):
     def __init__(self, argv):
         super(Application, self).__init__(argv)
 
-        self.initColors()
         self.initResources()
         self.initSettings()
 
-    def initColors(self):
-        self.white = QColor(255, 255, 255)
-        self.black = QColor(0, 0, 0)
-        self.gray = QColor(191, 191, 191)
-        self.shadow = QColor(0, 0, 0, 50)
-        self.light = QColor(255, 255, 255, 200)
-        self.red = QColor(255, 0, 0)
-        self.lightRed = QColor(242, 219, 219, 100)
-
     def initResources(self):
-        self.calendarIcon = QIcon(os.path.join(os.path.dirname(__file__), "resources", "calendar.ico"))
+        self.calendarIcon = QIcon(os.path.join(os.path.dirname(__file__), "resources", "kalender.ico"))
 
         self.leftPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "resources", "left.png"))
         self.leftDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "resources", "left-down.png"))
@@ -663,9 +643,7 @@ class MainWindow(QMainWindow):
         r = Range()
         r.start = self.calendar.selectionStart()
         r.end = self.calendar.selectionEnd()
-        r.color = QColor.fromHsvF(
-            (GOLDEN_RATIO_CONJUGATE * self.model.nextId()) % 1,
-            0.5, 0.8)
+        r.color = random.choice(SOLARIZED_ACCENT_COLORS)
 
         dialog = RangeDialog(self.app, r, self)
         dialog.show()
@@ -679,8 +657,8 @@ class MainWindow(QMainWindow):
 
     def askClose(self):
         while RangeDialog.dialogs:
-	    dialog = RangeDialog.dialogs.pop()
-	    dialog.close()
+            dialog = RangeDialog.dialogs.pop()
+            dialog.close()
 
         if not self.model.modified:
             return True
@@ -723,7 +701,7 @@ class MainWindow(QMainWindow):
 
 class HolidayOverlay(object):
     def __init__(self, app):
-        self.brush = QBrush(app.lightRed)
+        self.brush = QBrush(RED_LIGHT_COLOR)
         self.enabled = True
 
     def matches(self, month, day):
@@ -736,7 +714,7 @@ class HolidayOverlay(object):
         pixmap = QPixmap(16, 16)
         painter = QPainter(pixmap)
         painter.setPen(Qt.NoPen)
-        painter.setBrush(QColor(255, 255, 255))
+        painter.setBrush(Qt.white)
         painter.drawRect(0, 0, 16, 16)
         painter.setBrush(self.brush)
         painter.drawRect(0, 0, 16, 16)
@@ -746,7 +724,7 @@ class HolidayOverlay(object):
 
 class FerienNiedersachsen(HolidayOverlay):
     def __init__(self, app):
-        self.brush = QBrush(QColor(100, 200, 100, 50))
+        self.brush = QBrush(GREEN_LIGHT_COLOR)
         self.enabled = True
 
     def matches(self, month, day):
@@ -786,7 +764,7 @@ class FerienNiedersachsen(HolidayOverlay):
 
 class HolidaysClausthal(HolidayOverlay):
     def __init__(self, app):
-        self.brush = QBrush(QColor(255, 255, 0, 50))
+        self.brush = QBrush(YELLOW_LIGHT_COLOR)
         self.enabled = True
 
     def matches(self, month, day):
@@ -937,7 +915,7 @@ class CalendarWidget(QWidget):
 
         # Draw white background.
         for x, month in self.visibleMonths():
-            painter.fillRect(QRect(x, 40 + 20, self.columnWidth, days_of_month(month) * self.rowHeight), QBrush(self.app.white))
+            painter.fillRect(QRect(x, 40 + 20, self.columnWidth, days_of_month(month) * self.rowHeight), QBrush(Qt.white))
 
         for x, month in self.visibleMonths():
             # Draw year header.
@@ -1004,9 +982,9 @@ class CalendarWidget(QWidget):
                 yStart = 40 + 20 + (day - 1) * self.rowHeight
                 yEnd = yStart + self.rowHeight
                 if date.dayOfWeek() == 7:
-                    painter.setPen(QPen(self.app.gray, 2))
+                    painter.setPen(QPen(Qt.gray, 2))
                 else:
-                    painter.setPen(QPen(self.app.gray))
+                    painter.setPen(QPen(Qt.gray))
                 painter.drawLine(x + 1, yEnd, x + self.columnWidth, yEnd)
 
                 # Draw overlays.
@@ -1016,11 +994,11 @@ class CalendarWidget(QWidget):
 
                 # Draw selection.
                 if self.inSelection(date):
-                    painter.fillRect(QRect(x, yStart, self.columnWidth + 1, self.rowHeight + 1), QColor(91, 91, 255, 50))
+                    painter.fillRect(QRect(x, yStart, self.columnWidth + 1, self.rowHeight + 1), BLUE_LIGHT_COLOR)
 
                 # Draw selection end.
                 if date == self.selection_end:
-                    painter.setPen(QPen(QColor(30, 30, 200), 2))
+                    painter.setPen(QPen(SOLARIZED_BASE_COLOR, 2))
                     painter.drawRect(QRect(x + 2, yStart + 2, self.columnWidth - 4, self.rowHeight - 4))
 
                 # Draw day numbers.
@@ -1042,14 +1020,14 @@ class CalendarWidget(QWidget):
             # Draw vertical lines.
             painter.save()
             if month % 12 == 0:
-                painter.setPen(QPen(self.app.gray))
+                painter.setPen(QPen(Qt.gray))
                 painter.drawLine(x - 2, 0, x - 2, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)) - 1)
                 painter.setPen(QPen(self.palette().window().color(), 2))
                 painter.drawLine(x, 0, x, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)))
-                painter.setPen(QPen(self.app.gray))
+                painter.setPen(QPen(Qt.gray))
                 painter.drawLine(x + 1, 0, x + 1, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)) - 1)
             else:
-                painter.setPen(QPen(self.app.gray))
+                painter.setPen(QPen(Qt.gray))
                 painter.drawLine(x, 40 + 20, x, 40 + 20 + self.rowHeight * max(days_of_month(month), days_of_month(month - 1)) - 1)
             painter.restore()
 
@@ -1065,7 +1043,7 @@ class CalendarWidget(QWidget):
         now = datetime.date.today()
         month = (now.year - 1900) * 12 + now.month - 1
         x = (month - self.offset) * self.columnWidth
-        self.drawRaisedRect(painter, QRect(x, 40 + 20 + (now.day - 1) * self.rowHeight, self.columnWidth, self.rowHeight), self.app.red)
+        self.drawRaisedRect(painter, QRect(x, 40 + 20 + (now.day - 1) * self.rowHeight, self.columnWidth, self.rowHeight), Qt.red)
 
     def drawRange(self, painter, iterated_golden_ratio, start, end, color):
         from_month = (start.year() - 1900) * 12 + start.month() - 1
@@ -1104,7 +1082,7 @@ class CalendarWidget(QWidget):
         painter.drawRect(rect)
 
         # Draw inner shadow.
-        painter.setPen(QPen(self.app.shadow, 3))
+        painter.setPen(QPen(SHADOW_COLOR, 3))
         painter.drawLine(
             rect.x() + 6, rect.y() + 3,
             rect.x() + rect.width() - 4, rect.y() + 3)
@@ -1121,7 +1099,7 @@ class CalendarWidget(QWidget):
             rect.x() + rect.width() + 3, rect.y() + rect.height())
 
         # Draw highlight.
-        painter.setPen(QPen(self.app.light, 1))
+        painter.setPen(QPen(LIGHT_COLOR, 1))
         painter.drawLine(
             rect.x() - 2, rect.y() - 2,
             rect.x() + rect.width() + 1, rect.y() -2)
@@ -1130,7 +1108,7 @@ class CalendarWidget(QWidget):
             rect.x() - 2, rect.y() + rect.height() + 1)
 
         # Draw highlight shadow.
-        painter.setPen(QPen(self.app.shadow, 1))
+        painter.setPen(QPen(SHADOW_COLOR, 1))
         painter.drawLine(
             rect.x() - 2, rect.y() + rect.height() + 1,
             rect.x() + rect.width() + 1, rect.y() + rect.height() + 1)
