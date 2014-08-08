@@ -259,19 +259,19 @@ class Application(QApplication):
         self.lightRed = QColor(242, 219, 219, 100)
 
     def initResources(self):
-        self.calendarIcon = QIcon(os.path.join(os.path.dirname(__file__), "calendar.ico"))
+        self.calendarIcon = QIcon(os.path.join(os.path.dirname(__file__), "resources", "calendar.ico"))
 
-        self.leftPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "left.png"))
-        self.leftDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "left-down.png"))
-        self.rightPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "right.png"))
-        self.rightDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "right-down.png"))
-        self.todayPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "today.png"))
-        self.todayDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "today-down.png"))
+        self.leftPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "resources", "left.png"))
+        self.leftDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "resources", "left-down.png"))
+        self.rightPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "resources", "right.png"))
+        self.rightDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "resources", "right-down.png"))
+        self.todayPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "resources", "today.png"))
+        self.todayDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "resources", "today-down.png"))
 
-        self.newPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "new.png"))
-        self.newDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "new-down.png"))
+        self.newPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "resources", "new.png"))
+        self.newDownPixmap = QPixmap(os.path.join(os.path.dirname(__file__), "resources", "new-down.png"))
 
-        self.deletePixmap = QPixmap(os.path.join(os.path.dirname(__file__), "delete.png"))
+        self.deletePixmap = QPixmap(os.path.join(os.path.dirname(__file__), "resources", "delete.png"))
 
     def initSettings(self):
         self.settings = QSettings("Injoy Osterode", "Kalender")
