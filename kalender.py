@@ -759,6 +759,14 @@ class FerienNiedersachsen(HolidayOverlay):
             match |= QDate(2015, 10, 19) <= date <= QDate(2015, 10, 31) # Herbst
             match |= QDate(2015, 12, 23) <= date <= QDate(2016, 1, 6) # Weihnachten
 
+        if year in (2016, 2017):
+            match |= QDate(2016, 1, 28) <= date <= QDate(2016, 1, 29) # Winter
+            match |= QDate(2016, 3, 18) <= date <= QDate(2016, 4, 2) # Ostern
+            match |= (date == QDate(2016, 5, 6)) or (date == QDate(2016, 5, 17)) # Pfingsten
+            match |= QDate(2016, 6, 23) <= date <= QDate(2016, 8, 3) # Sommer
+            match |= QDate(2016, 10, 3) <= date <= QDate(2016, 10, 15) # Herbst
+            match |= QDate(2016, 12, 21) <= date <= QDate(2017, 1, 6) # Weihnachten
+
         return match
 
 
