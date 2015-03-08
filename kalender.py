@@ -1082,7 +1082,7 @@ class CalendarWidget(QWidget):
         to_y = 40 + 20 + self.rowHeight * (to_day - 0.5)
 
         for month in range(from_month, to_month + 1):
-            x = (month - self.offset) * self.columnWidth + self.columnWidth * iterated_golden_ratio
+            x = (month - self.offset) * self.columnWidth + 5 + (self.columnWidth - 10) * iterated_golden_ratio
 
             if month == from_month:
                 painter.drawEllipse(QPoint(x, from_y), radius, radius)
