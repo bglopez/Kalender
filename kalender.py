@@ -1073,7 +1073,7 @@ class CalendarWidget(QWidget):
         to_month = (end.year() - 1900) * 12 + end.month() - 1
         to_day = end.day()
 
-        radius = max(6, min(self.rowHeight * 0.5, self.columnWidth * 0.25) - 2)
+        radius = max(6, min(self.rowHeight * 0.5, self.columnWidth * 0.25) - 2) / 2
 
         painter.setBrush(QBrush(color))
         painter.setPen(QPen(color, max(2.0, radius * 0.8)))
