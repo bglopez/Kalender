@@ -1,2 +1,2 @@
-C:\Python27\python.exe kalender.py
+python.exe kalender.py
 pause

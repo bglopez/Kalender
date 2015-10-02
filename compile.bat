@@ -1,2 +1,2 @@
-C:\Python27\python.exe -c "import kalender"
+python.exe -c "import kalender"
 pause
