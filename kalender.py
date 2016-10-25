@@ -3,7 +3,7 @@
 
 __author__ = "Niklas Fiekas"
 __email__ = "niklas.fiekas@tu-clausthal.de"
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 from PySide.QtCore import *
 from PySide.QtGui import *
