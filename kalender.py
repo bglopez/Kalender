@@ -772,13 +772,22 @@ class FerienNiedersachsen(HolidayOverlay):
             match |= QDate(2017, 4, 10) <= date <= QDate(2017, 4, 22) # Ostern
             match |= (date == QDate(2017, 5, 26)) or (date == QDate(2017, 6, 6)) # Pfingsten
             match |= QDate(2017, 6, 22) <= date <= QDate(2017, 8, 2) # Sommer
-            # TODO: Herbst, Weihnachten
+            match |= QDate(2017, 10, 2) <= date <= QDate(2017, 10, 13) # Herbst
+            match |= date == QDate(2017, 10, 30) # Brückentag
+            match |= date == QDate(2017, 10, 31) # Reformationstag
+            match |= QDate(2017, 12, 22) <= date <= QDate(2018, 1, 5) # Weihnachten
 
         if year in (2018, 2019):
+            match |= QDate(2018, 2, 1) <= date <= QDate(2018, 2, 2) # Winter
+            match |= QDate(2018, 3, 19) <= date <= QDate(2018, 4, 3) # Ostern
+            match |= date in [QDate(2018, 4, 30), QDate(2018, 5, 11), QDate(2018, 5, 22)] # Pfingsten
             match |= QDate(2018, 6, 28) <= date <= QDate(2018, 8, 8) # Sommer
+            match |= QDate(2018, 10, 1) <= date <= QDate(2018, 10, 12) # Herbst
+            match |= QDate(2018, 12, 24) <= date <= QDate(2019, 1, 4) # Weihnachten
 
         if year in (2019, 2020):
             match |= QDate(2019, 7, 4) <= date <= QDate(2019, 8, 14) # Sommer
+            # TODO: Weitere Ferien nachtragen
 
         return match
 
