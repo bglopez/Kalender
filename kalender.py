@@ -438,9 +438,6 @@ class MainWindow(QMainWindow):
         self.holidayOverlay = HolidayOverlay(self.app)
         self.calendar.overlays.append(self.holidayOverlay)
 
-        self.holidaysClausthalOverlay = HolidaysClausthal(self.app)
-        self.calendar.overlays.append(self.holidaysClausthalOverlay)
-
     def initActions(self):
         self.newAction = QAction("Neu", self)
         self.newAction.triggered.connect(self.onNewAction)
@@ -489,11 +486,6 @@ class MainWindow(QMainWindow):
         self.ferienNiedersachsenAction.setCheckable(True)
         self.ferienNiedersachsenAction.toggled.connect(self.onFerienNiedersachsenToggled)
 
-        self.holidaysClausthalAction = QAction("Vorlesungsfreie Zeit Clausthal", self)
-        self.holidaysClausthalAction.setIcon(self.holidaysClausthalOverlay.icon())
-        self.holidaysClausthalAction.setCheckable(True)
-        self.holidaysClausthalAction.toggled.connect(self.onHolidaysClausthalToggled)
-
         self.aboutAction = QAction(u"Über ...", self)
         self.aboutAction.triggered.connect(self.onAboutAction)
         self.aboutAction.setShortcut("F1")
@@ -524,7 +516,6 @@ class MainWindow(QMainWindow):
         viewMenu.addSeparator()
         viewMenu.addAction(self.holidayAction)
         viewMenu.addAction(self.ferienNiedersachsenAction)
-        viewMenu.addAction(self.holidaysClausthalAction)
 
         infoMenu = self.menuBar().addMenu("Info")
         infoMenu.addAction(self.aboutAction)
@@ -548,10 +539,6 @@ class MainWindow(QMainWindow):
         # Restore Schulferien Niedersachsen.
         self.ferienNiedersachsenOverlay.enabled = bool(int(self.app.settings.value("ferienNiedersachsen", "1")))
         self.ferienNiedersachsenAction.setChecked(self.ferienNiedersachsenOverlay.enabled)
-
-        # Restore Vorlesungsfreie Zeit Clausthal.
-        self.holidaysClausthalOverlay.enabled = bool(int(self.app.settings.value("holidaysClausthal", "0")))
-        self.holidaysClausthalAction.setChecked(self.holidaysClausthalOverlay.enabled)
 
         # Load most recent file.
         if self.app.settings.value("path"):
@@ -628,10 +615,6 @@ class MainWindow(QMainWindow):
         self.ferienNiedersachsenOverlay.enabled = checked
         self.calendar.repaint()
 
-    def onHolidaysClausthalToggled(self, checked):
-        self.holidaysClausthalOverlay.enabled = checked
-        self.calendar.repaint()
-
     def onUndoAction(self):
         self.calendar.model.undo()
 
@@ -690,7 +673,6 @@ class MainWindow(QMainWindow):
             self.app.settings.setValue("windowState", self.saveState())
             self.app.settings.setValue("holidays", str(int(self.holidayOverlay.enabled)))
             self.app.settings.setValue("ferienNiedersachsen", str(int(self.ferienNiedersachsenOverlay.enabled)))
-            self.app.settings.setValue("holidaysClausthal", str(int(self.holidaysClausthalOverlay.enabled)))
 
             if self.path:
                 self.app.settings.setValue("path", self.path)
@@ -789,35 +771,12 @@ class FerienNiedersachsen(HolidayOverlay):
             match |= QDate(2018, 12, 24) <= date <= QDate(2019, 1, 4) # Weihnachten
 
         if year in (2019, 2020):
+            match |= QDate(2019, 1, 31) <= date <= QDate(2019, 2, 1) # Winter
+            match |= QDate(2019, 4, 8) <= date <= QDate(2019, 4, 23) # Ostern
+            match |= date in [QDate(2019, 5, 31), QDate(2019, 6, 11)] # Pfingsten
             match |= QDate(2019, 7, 4) <= date <= QDate(2019, 8, 14) # Sommer
-            # TODO: Weitere Ferien nachtragen
-
-        return match
-
-
-class HolidaysClausthal(HolidayOverlay):
-    def __init__(self, app):
-        self.brush = QBrush(YELLOW_LIGHT_COLOR)
-        self.enabled = True
-
-    def matches(self, month, day):
-        if not self.enabled:
-            return False
-
-        year = 1900 + month // 12
-        date = qdate(month, day)
-        match = False
-
-        if year in (2014, 2015):
-            match |= QDate(2014, 6, 7) < date < QDate(2014, 6, 16) # Pfingsten
-            match |= QDate(2014, 7, 26) < date < QDate(2014, 10, 1) # Semester
-            match |= QDate(2014, 12, 20) < date < QDate(2015, 1, 5) # Weihnachten
-
-        if year in (2015, 2016):
-            match |= QDate(2015, 2, 7) < date < QDate(2015, 4, 13) # Semester
-            match |= QDate(2015, 5, 23) < date < QDate(2015, 6, 1) # Pfingsten
-            match |= QDate(2015, 7, 25) < date < QDate(2015, 10, 26) # Semester
-            match |= QDate(2015, 12, 19) < date < QDate(2016, 1, 4) # Winter
+            match |= QDate(2019, 10, 4) <= date <= QDate(2019, 10, 18) # Herbst
+            match |= QDate(2019, 12, 13) <= date <= QDate(2020, 1, 7) # Weihnachten
 
         return match
 
