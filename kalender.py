@@ -77,6 +77,7 @@ HOLIDAY_PENTECOST = 32
 HOLIDAY_TAG_DER_DEUTSCHEN_EINHEIT = 64
 HOLIDAY_CHRISTMAS = 128
 HOLIDAY_SUNDAY = 256
+HOLIDAY_REFORMATIONSTAG = 512
 
 def is_holiday(month, day):
     holiday = HOLIDAY_NONE
@@ -103,6 +104,8 @@ def is_holiday(month, day):
         holiday |= HOLIDAY_MAY_1
     elif date.month() == 10 and date.day() == 3:
         holiday |= HOLIDAY_TAG_DER_DEUTSCHEN_EINHEIT
+    elif date.month() == 10 and date.day() == 31:
+        holiday |= HOLIDAY_REFORMATIONSTAG
     elif date.month() == 12 and date.day() in (25, 26):
         holiday |= HOLIDAY_CHRISTMAS
 
