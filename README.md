@@ -7,7 +7,7 @@ Gibt einen Überblick über die Termine eines Jahres.
 Installation auf Windows
 ------------------------
 
- * Python 2.7 installieren
+ * Python 3 installieren
  * PySide installieren
  * compile.bat
  * install-shortcut.vbs
