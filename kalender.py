@@ -5,8 +5,9 @@ __author__ = "Niklas Fiekas"
 __email__ = "niklas.fiekas@backscattering.de"
 __version__ = "0.1.0"
 
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PySide2.QtCore import *
+from PySide2.QtWidgets import *
+from PySide2.QtGui import *
 
 import datetime
 import sys
