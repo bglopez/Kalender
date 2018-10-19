@@ -8,8 +8,7 @@ Installation auf Windows
 ------------------------
 
  * Python 3 installieren
- * PySide installieren
- * compile.bat
+ * `pip install PySide2`
  * install-shortcut.vbs
 
 Lizenz
