@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 __author__ = "Niklas Fiekas"
-__email__ = "niklas.fiekas@tu-clausthal.de"
-__version__ = "0.0.3"
+__email__ = "niklas.fiekas@backscattering.de"
+__version__ = "0.1.0"
 
 from PySide.QtCore import *
 from PySide.QtGui import *
@@ -555,8 +555,8 @@ class MainWindow(QMainWindow):
             try:
                 self.setModel(Model.load(self.app.settings.value("path")))
                 self.path = self.app.settings.value("path")
-            except Exception, e:
-                print e
+            except Exception as err:
+                print(err)
 
     def onAboutAction(self):
         QMessageBox.about(
@@ -578,9 +578,9 @@ class MainWindow(QMainWindow):
             try:
                 self.model.save(self.path)
                 return True
-            except Exception, e:
+            except Exception as err:
                 QMessageBox.critical(self, "Fehler", "Speichern fehlgeschlagen.")
-                print e
+                print(err)
                 return False
 
     def onSaveAsAction(self):
@@ -593,9 +593,9 @@ class MainWindow(QMainWindow):
             try:
                 self.model.save(self.path)
                 return True
-            except Exception, e:
+            except Exception as err:
                 QMessageBox.critical(self, "Fehler", "Speichern fehlgeschlagen.")
-                print e
+                print(err)
                 return False
         else:
             return False
@@ -612,9 +612,9 @@ class MainWindow(QMainWindow):
                 try:
                     self.setModel(Model.load(path))
                     self.path = path
-                except Exception, e:
+                except Exception as err:
                     QMessageBox.critical(self, "Fehler", u"Öffnen fehlgeschlagen.")
-                    print e
+                    print(err)
                     return False
 
     def onHolidaysToggled(self, checked):
@@ -930,7 +930,7 @@ class CalendarWidget(QWidget):
         start = int(self.offset) - 13
         end = int(self.offset + self.width() / self.columnWidth + 1)
 
-        for month in xrange(start, end):
+        for month in range(start, end):
             x = (month - self.offset) * self.columnWidth
             yield x, month
 
