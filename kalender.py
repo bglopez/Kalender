@@ -787,6 +787,14 @@ class FerienNiedersachsen(HolidayOverlay):
             match |= QDate(2020, 10, 12) <= date <= QDate(2020, 10, 23) # Herbst
             match |= QDate(2020, 12, 23) <= date <= QDate(2021, 1, 8) # Weihnachten
 
+        if year in [2021, 2022]:
+            match |= QDate(2021, 2, 1) <= date <= QDate(2021, 2, 2) # Winter
+            match |= QDate(2021, 3, 29) <= date <= QDate(2021, 4, 9) # Ostern
+            match |= date in [QDate(2021, 5, 14), QDate(2021, 5, 25)] # Pfingsten
+            match |= QDate(2021, 7, 22) <= date <= QDate(2021, 9, 1) # Sommer
+            match |= QDate(2021, 10, 18) <= date <= QDate(2021, 10, 29) # Herbst
+            match |= QDate(2021, 12, 23) <= date <= QDate(2022, 1, 7) # Weihnachten
+
         return match
 
 
