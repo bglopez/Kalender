@@ -25,14 +25,14 @@ WEEKDAY_NAMES = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag",
 
 
 SOLARIZED_ACCENT_COLORS = [
-    QColor("#b58900"), # Yellow
-    QColor("#cb4b16"), # Orange
-    QColor("#dc322f"), # Red
-    QColor("#d33682"), # Magenta
-    QColor("#6c71c4"), # Violet
-    QColor("#268bd2"), # Blue
-    QColor("#2aa198"), # Cyan
-    QColor("#859900"), # Green
+    QColor("#b58900"),  # Yellow
+    QColor("#cb4b16"),  # Orange
+    QColor("#dc322f"),  # Red
+    QColor("#d33682"),  # Magenta
+    QColor("#6c71c4"),  # Violet
+    QColor("#268bd2"),  # Blue
+    QColor("#2aa198"),  # Cyan
+    QColor("#859900"),  # Green
 ]
 
 SOLARIZED_BASE_COLOR = QColor(7, 54, 66)
@@ -141,11 +141,11 @@ class Model(QObject):
 
     def __init__(self):
         super(Model, self).__init__()
-        self.ranges = { }
+        self.ranges = {}
         self.modified = False
 
-        self.undoStack = [ ]
-        self.redoStack = [ ]
+        self.undoStack = []
+        self.redoStack = []
 
     def nextId(self):
         return max(itertools.chain(self.ranges.keys(), [0])) + 1
@@ -197,7 +197,7 @@ class Model(QObject):
         self.modelChanged.emit()
 
     def save(self, path):
-        document = { }
+        document = {}
         for key in self.ranges:
             r = self.ranges[key]
             if not r.deleted:
@@ -298,7 +298,7 @@ class ColorButton(QPushButton):
 
 class RangeDialog(QDialog):
 
-    dialogs = [ ]
+    dialogs = []
 
     def __init__(self, app, r, parent):
         super(RangeDialog, self).__init__(parent)
@@ -315,7 +315,7 @@ class RangeDialog(QDialog):
         else:
             self.setWindowTitle("Neuer Eintrag")
 
-        self.setWindowFlags(self.windowFlags() &~ Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 
         self.colorExplicit = bool(r.index)
 
@@ -722,78 +722,78 @@ class FerienNiedersachsen(HolidayOverlay):
         match = False
 
         if year in [2013, 2014]:
-            match |= QDate(2013, 1, 31) <= date <= QDate(2013, 2, 1) # Winter
-            match |= QDate(2013, 3, 16) <= date <= QDate(2013, 4, 2) # Ostern
-            match |= (date == QDate(2013, 5, 10)) or (date == QDate(2013, 5, 21)) # Pfingsten
-            match |= QDate(2013, 6, 27) <= date <= QDate(2013, 8, 7) # Sommer
-            match |= QDate(2013, 10, 4) <= date <= QDate(2013, 10, 18) # Herbst
-            match |= QDate(2013, 12, 23) <= date <= QDate(2014, 1, 3) # Weihnachten
+            match |= QDate(2013, 1, 31) <= date <= QDate(2013, 2, 1)  # Winter
+            match |= QDate(2013, 3, 16) <= date <= QDate(2013, 4, 2)  # Ostern
+            match |= (date == QDate(2013, 5, 10)) or (date == QDate(2013, 5, 21))  # Pfingsten
+            match |= QDate(2013, 6, 27) <= date <= QDate(2013, 8, 7)  # Sommer
+            match |= QDate(2013, 10, 4) <= date <= QDate(2013, 10, 18)  # Herbst
+            match |= QDate(2013, 12, 23) <= date <= QDate(2014, 1, 3)  # Weihnachten
 
         if year in [2014, 2015]:
-            match |= QDate(2014, 1, 30) <= date <= QDate(2014, 1, 31) # Winter
-            match |= (QDate(2014, 4, 3) <= date <= QDate(2014, 4, 22)) or (date == QDate(2014, 5, 2)) # Ostern
-            match |= (date == QDate(2014, 5, 30)) or (date == QDate(2014, 6, 10)) # Pfingsten
-            match |= QDate(2014, 7, 31) <= date <= QDate(2014, 9, 10) # Sommer
-            match |= QDate(2014, 10, 27) <= date <= QDate(2014, 11, 8) # Herbst
-            match |= QDate(2014, 12, 22) <= date <= QDate(2015, 1, 5) # Weihnachten
+            match |= QDate(2014, 1, 30) <= date <= QDate(2014, 1, 31)  # Winter
+            match |= (QDate(2014, 4, 3) <= date <= QDate(2014, 4, 22)) or (date == QDate(2014, 5, 2))  # Ostern
+            match |= (date == QDate(2014, 5, 30)) or (date == QDate(2014, 6, 10))  # Pfingsten
+            match |= QDate(2014, 7, 31) <= date <= QDate(2014, 9, 10)  # Sommer
+            match |= QDate(2014, 10, 27) <= date <= QDate(2014, 11, 8)  # Herbst
+            match |= QDate(2014, 12, 22) <= date <= QDate(2015, 1, 5)  # Weihnachten
 
         if year in [2015, 2016]:
-            match |= QDate(2015, 2, 2) <= date <= QDate(2015, 2, 3) # Winter
-            match |= QDate(2015, 3, 25) <= date <= QDate(2014, 4, 10) # Ostern
-            match |= (date == QDate(2015, 5, 15)) or (date == QDate(2015, 5, 26)) # Pfingsten
-            match |= QDate(2015, 7, 23) <= date <= QDate(2015, 9, 2) # Sommer
-            match |= QDate(2015, 10, 19) <= date <= QDate(2015, 10, 31) # Herbst
-            match |= QDate(2015, 12, 23) <= date <= QDate(2016, 1, 6) # Weihnachten
+            match |= QDate(2015, 2, 2) <= date <= QDate(2015, 2, 3)  # Winter
+            match |= QDate(2015, 3, 25) <= date <= QDate(2014, 4, 10)  # Ostern
+            match |= (date == QDate(2015, 5, 15)) or (date == QDate(2015, 5, 26))  # Pfingsten
+            match |= QDate(2015, 7, 23) <= date <= QDate(2015, 9, 2)  # Sommer
+            match |= QDate(2015, 10, 19) <= date <= QDate(2015, 10, 31)  # Herbst
+            match |= QDate(2015, 12, 23) <= date <= QDate(2016, 1, 6)  # Weihnachten
 
         if year in [2016, 2017]:
-            match |= QDate(2016, 1, 28) <= date <= QDate(2016, 1, 29) # Winter
-            match |= QDate(2016, 3, 18) <= date <= QDate(2016, 4, 2) # Ostern
-            match |= (date == QDate(2016, 5, 6)) or (date == QDate(2016, 5, 17)) # Pfingsten
-            match |= QDate(2016, 6, 23) <= date <= QDate(2016, 8, 3) # Sommer
-            match |= QDate(2016, 10, 3) <= date <= QDate(2016, 10, 15) # Herbst
-            match |= QDate(2016, 12, 21) <= date <= QDate(2017, 1, 6) # Weihnachten
+            match |= QDate(2016, 1, 28) <= date <= QDate(2016, 1, 29)  # Winter
+            match |= QDate(2016, 3, 18) <= date <= QDate(2016, 4, 2)  # Ostern
+            match |= (date == QDate(2016, 5, 6)) or (date == QDate(2016, 5, 17))  # Pfingsten
+            match |= QDate(2016, 6, 23) <= date <= QDate(2016, 8, 3)  # Sommer
+            match |= QDate(2016, 10, 3) <= date <= QDate(2016, 10, 15)  # Herbst
+            match |= QDate(2016, 12, 21) <= date <= QDate(2017, 1, 6)  # Weihnachten
 
         if year in [2017, 2018]:
-            match |= QDate(2017, 1, 30) <= date <= QDate(2017, 1, 31) # Winter
-            match |= QDate(2017, 4, 10) <= date <= QDate(2017, 4, 22) # Ostern
-            match |= (date == QDate(2017, 5, 26)) or (date == QDate(2017, 6, 6)) # Pfingsten
-            match |= QDate(2017, 6, 22) <= date <= QDate(2017, 8, 2) # Sommer
-            match |= QDate(2017, 10, 2) <= date <= QDate(2017, 10, 13) # Herbst
-            match |= date == QDate(2017, 10, 30) # Brückentag
-            match |= date == QDate(2017, 10, 31) # Reformationstag
-            match |= QDate(2017, 12, 22) <= date <= QDate(2018, 1, 5) # Weihnachten
+            match |= QDate(2017, 1, 30) <= date <= QDate(2017, 1, 31)  # Winter
+            match |= QDate(2017, 4, 10) <= date <= QDate(2017, 4, 22)  # Ostern
+            match |= (date == QDate(2017, 5, 26)) or (date == QDate(2017, 6, 6))  # Pfingsten
+            match |= QDate(2017, 6, 22) <= date <= QDate(2017, 8, 2)  # Sommer
+            match |= QDate(2017, 10, 2) <= date <= QDate(2017, 10, 13)  # Herbst
+            match |= date == QDate(2017, 10, 30)  # Brückentag
+            match |= date == QDate(2017, 10, 31)  # Reformationstag
+            match |= QDate(2017, 12, 22) <= date <= QDate(2018, 1, 5)  # Weihnachten
 
         if year in [2018, 2019]:
-            match |= QDate(2018, 2, 1) <= date <= QDate(2018, 2, 2) # Winter
-            match |= QDate(2018, 3, 19) <= date <= QDate(2018, 4, 3) # Ostern
-            match |= date in [QDate(2018, 4, 30), QDate(2018, 5, 11), QDate(2018, 5, 22)] # Pfingsten
-            match |= QDate(2018, 6, 28) <= date <= QDate(2018, 8, 8) # Sommer
-            match |= QDate(2018, 10, 1) <= date <= QDate(2018, 10, 12) # Herbst
-            match |= QDate(2018, 12, 24) <= date <= QDate(2019, 1, 4) # Weihnachten
+            match |= QDate(2018, 2, 1) <= date <= QDate(2018, 2, 2)  # Winter
+            match |= QDate(2018, 3, 19) <= date <= QDate(2018, 4, 3)  # Ostern
+            match |= date in [QDate(2018, 4, 30), QDate(2018, 5, 11), QDate(2018, 5, 22)]  # Pfingsten
+            match |= QDate(2018, 6, 28) <= date <= QDate(2018, 8, 8)  # Sommer
+            match |= QDate(2018, 10, 1) <= date <= QDate(2018, 10, 12)  # Herbst
+            match |= QDate(2018, 12, 24) <= date <= QDate(2019, 1, 4)  # Weihnachten
 
         if year in [2019, 2020]:
-            match |= QDate(2019, 1, 31) <= date <= QDate(2019, 2, 1) # Winter
-            match |= QDate(2019, 4, 8) <= date <= QDate(2019, 4, 23) # Ostern
-            match |= date in [QDate(2019, 5, 31), QDate(2019, 6, 11)] # Pfingsten
-            match |= QDate(2019, 7, 4) <= date <= QDate(2019, 8, 14) # Sommer
-            match |= QDate(2019, 10, 4) <= date <= QDate(2019, 10, 18) # Herbst
-            match |= QDate(2019, 12, 23) <= date <= QDate(2020, 1, 6) # Weihnachten
+            match |= QDate(2019, 1, 31) <= date <= QDate(2019, 2, 1)  # Winter
+            match |= QDate(2019, 4, 8) <= date <= QDate(2019, 4, 23)  # Ostern
+            match |= date in [QDate(2019, 5, 31), QDate(2019, 6, 11)]  # Pfingsten
+            match |= QDate(2019, 7, 4) <= date <= QDate(2019, 8, 14)  # Sommer
+            match |= QDate(2019, 10, 4) <= date <= QDate(2019, 10, 18)  # Herbst
+            match |= QDate(2019, 12, 23) <= date <= QDate(2020, 1, 6)  # Weihnachten
 
         if year in [2020, 2021]:
-            match |= QDate(2020, 2, 3) <= date <= QDate(2020, 2, 4) # Winter
-            match |= QDate(2020, 3, 30) <= date <= QDate(2010, 4, 14) # Ostern
-            match |= date in [QDate(2020, 5, 22), QDate(2020, 6, 2)] # Pfingsten
-            match |= QDate(2020, 7, 16) <= date <= QDate(2020, 8, 26) # Sommer
-            match |= QDate(2020, 10, 12) <= date <= QDate(2020, 10, 23) # Herbst
-            match |= QDate(2020, 12, 23) <= date <= QDate(2021, 1, 8) # Weihnachten
+            match |= QDate(2020, 2, 3) <= date <= QDate(2020, 2, 4)  # Winter
+            match |= QDate(2020, 3, 30) <= date <= QDate(2010, 4, 14)  # Ostern
+            match |= date in [QDate(2020, 5, 22), QDate(2020, 6, 2)]  # Pfingsten
+            match |= QDate(2020, 7, 16) <= date <= QDate(2020, 8, 26)  # Sommer
+            match |= QDate(2020, 10, 12) <= date <= QDate(2020, 10, 23)  # Herbst
+            match |= QDate(2020, 12, 23) <= date <= QDate(2021, 1, 8)  # Weihnachten
 
         if year in [2021, 2022]:
-            match |= QDate(2021, 2, 1) <= date <= QDate(2021, 2, 2) # Winter
-            match |= QDate(2021, 3, 29) <= date <= QDate(2021, 4, 9) # Ostern
-            match |= date in [QDate(2021, 5, 14), QDate(2021, 5, 25)] # Pfingsten
-            match |= QDate(2021, 7, 22) <= date <= QDate(2021, 9, 1) # Sommer
-            match |= QDate(2021, 10, 18) <= date <= QDate(2021, 10, 29) # Herbst
-            match |= QDate(2021, 12, 23) <= date <= QDate(2022, 1, 7) # Weihnachten
+            match |= QDate(2021, 2, 1) <= date <= QDate(2021, 2, 2)  # Winter
+            match |= QDate(2021, 3, 29) <= date <= QDate(2021, 4, 9)  # Ostern
+            match |= date in [QDate(2021, 5, 14), QDate(2021, 5, 25)]  # Pfingsten
+            match |= QDate(2021, 7, 22) <= date <= QDate(2021, 9, 1)  # Sommer
+            match |= QDate(2021, 10, 18) <= date <= QDate(2021, 10, 29)  # Herbst
+            match |= QDate(2021, 12, 23) <= date <= QDate(2022, 1, 7)  # Weihnachten
 
         return match
 
@@ -811,6 +811,7 @@ MOUSE_DOWN_RIGHT = 4
 MOUSE_DOWN_TODAY = 5
 MOUSE_DOWN_NEW = 6
 
+
 class CalendarWidget(QWidget):
 
     createClicked = Signal()
@@ -824,7 +825,7 @@ class CalendarWidget(QWidget):
         self.targetOffset = float(QDate.currentDate().year() - 1900) * 12
         self.offset = self.targetOffset
 
-        self.overlays = [ ]
+        self.overlays = []
         self.model = None
         self.setModel(Model())
 
@@ -960,8 +961,7 @@ class CalendarWidget(QWidget):
                 font.setPointSizeF(font.pointSizeF() * 1.2)
                 font.setBold(True)
                 painter.setFont(font)
-                painter.drawText(QRect(x + 120, 0, self.columnWidth * 12 - 32 * 2, 40),
-                    Qt.AlignVCenter, str(1900 + month // 12))
+                painter.drawText(QRect(x + 120, 0, self.columnWidth * 12 - 32 * 2, 40), Qt.AlignVCenter, str(1900 + month // 12))
                 painter.restore()
 
                 # Draw new pixmap.
@@ -1111,7 +1111,7 @@ class CalendarWidget(QWidget):
         painter.setPen(QPen(LIGHT_COLOR, 1))
         painter.drawLine(
             rect.x() - 2, rect.y() - 2,
-            rect.x() + rect.width() + 1, rect.y() -2)
+            rect.x() + rect.width() + 1, rect.y() - 2)
         painter.drawLine(
             rect.x() - 2, rect.y() - 2,
             rect.x() - 2, rect.y() + rect.height() + 1)
@@ -1220,7 +1220,7 @@ class CalendarWidget(QWidget):
 
         if 40 < event.y() < 40 + 20:
             self.selection_end = qdate(month, days_of_month(month))
-            if not event.modifiers() & Qt.ShiftModifier and not self.mouse_down in (MOUSE_DOWN_MONTH, MOUSE_DOWN_DAY):
+            if not event.modifiers() & Qt.ShiftModifier and self.mouse_down not in [MOUSE_DOWN_MONTH, MOUSE_DOWN_DAY]:
                 self.selection_start = qdate(month, 1)
             self.update()
         elif 40 + 20 < event.y():
