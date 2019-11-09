@@ -433,10 +433,10 @@ class MainWindow(QMainWindow):
         self.onModelChanged()
 
     def initOverlays(self):
-        self.ferienNiedersachsenOverlay = FerienNiedersachsen(self.app)
+        self.ferienNiedersachsenOverlay = FerienNiedersachsen()
         self.calendar.overlays.append(self.ferienNiedersachsenOverlay)
 
-        self.holidayOverlay = HolidayOverlay(self.app)
+        self.holidayOverlay = HolidayOverlay()
         self.calendar.overlays.append(self.holidayOverlay)
 
     def initActions(self):
@@ -686,7 +686,7 @@ class MainWindow(QMainWindow):
 
 
 class HolidayOverlay(object):
-    def __init__(self, app):
+    def __init__(self):
         self.brush = QBrush(RED_LIGHT_COLOR)
         self.enabled = True
 
@@ -709,9 +709,21 @@ class HolidayOverlay(object):
 
 
 class FerienNiedersachsen(HolidayOverlay):
-    def __init__(self, app):
+    def __init__(self):
         self.brush = QBrush(GREEN_LIGHT_COLOR)
         self.enabled = True
+        self.days = set()
+
+        # Read .json exported from https://www.mehr-schulferien.de/developers
+        with open(os.path.join(os.path.dirname(__file__), "ferien.json")) as f:
+            for record in json.load(f)["data"]:
+                if record["federal_state_id"] == 9:  # Niedersachsen
+                    start = QDate.fromString(record["starts_on"], "yyyy-MM-dd")
+                    end = QDate.fromString(record["ends_on"], "yyyy-MM-dd")
+                    while start < end:
+                        self.days.add(start)
+                        start = start.addDays(1)
+                    self.days.add(end)
 
     def matches(self, month, day):
         if not self.enabled:
@@ -719,75 +731,8 @@ class FerienNiedersachsen(HolidayOverlay):
 
         year = 1900 + month // 12
         date = qdate(month, day)
-        match = False
 
-        if year in [2013, 2014]:
-            match |= QDate(2013, 1, 31) <= date <= QDate(2013, 2, 1) # Winter
-            match |= QDate(2013, 3, 16) <= date <= QDate(2013, 4, 2) # Ostern
-            match |= (date == QDate(2013, 5, 10)) or (date == QDate(2013, 5, 21)) # Pfingsten
-            match |= QDate(2013, 6, 27) <= date <= QDate(2013, 8, 7) # Sommer
-            match |= QDate(2013, 10, 4) <= date <= QDate(2013, 10, 18) # Herbst
-            match |= QDate(2013, 12, 23) <= date <= QDate(2014, 1, 3) # Weihnachten
-
-        if year in [2014, 2015]:
-            match |= QDate(2014, 1, 30) <= date <= QDate(2014, 1, 31) # Winter
-            match |= (QDate(2014, 4, 3) <= date <= QDate(2014, 4, 22)) or (date == QDate(2014, 5, 2)) # Ostern
-            match |= (date == QDate(2014, 5, 30)) or (date == QDate(2014, 6, 10)) # Pfingsten
-            match |= QDate(2014, 7, 31) <= date <= QDate(2014, 9, 10) # Sommer
-            match |= QDate(2014, 10, 27) <= date <= QDate(2014, 11, 8) # Herbst
-            match |= QDate(2014, 12, 22) <= date <= QDate(2015, 1, 5) # Weihnachten
-
-        if year in [2015, 2016]:
-            match |= QDate(2015, 2, 2) <= date <= QDate(2015, 2, 3) # Winter
-            match |= QDate(2015, 3, 25) <= date <= QDate(2014, 4, 10) # Ostern
-            match |= (date == QDate(2015, 5, 15)) or (date == QDate(2015, 5, 26)) # Pfingsten
-            match |= QDate(2015, 7, 23) <= date <= QDate(2015, 9, 2) # Sommer
-            match |= QDate(2015, 10, 19) <= date <= QDate(2015, 10, 31) # Herbst
-            match |= QDate(2015, 12, 23) <= date <= QDate(2016, 1, 6) # Weihnachten
-
-        if year in [2016, 2017]:
-            match |= QDate(2016, 1, 28) <= date <= QDate(2016, 1, 29) # Winter
-            match |= QDate(2016, 3, 18) <= date <= QDate(2016, 4, 2) # Ostern
-            match |= (date == QDate(2016, 5, 6)) or (date == QDate(2016, 5, 17)) # Pfingsten
-            match |= QDate(2016, 6, 23) <= date <= QDate(2016, 8, 3) # Sommer
-            match |= QDate(2016, 10, 3) <= date <= QDate(2016, 10, 15) # Herbst
-            match |= QDate(2016, 12, 21) <= date <= QDate(2017, 1, 6) # Weihnachten
-
-        if year in [2017, 2018]:
-            match |= QDate(2017, 1, 30) <= date <= QDate(2017, 1, 31) # Winter
-            match |= QDate(2017, 4, 10) <= date <= QDate(2017, 4, 22) # Ostern
-            match |= (date == QDate(2017, 5, 26)) or (date == QDate(2017, 6, 6)) # Pfingsten
-            match |= QDate(2017, 6, 22) <= date <= QDate(2017, 8, 2) # Sommer
-            match |= QDate(2017, 10, 2) <= date <= QDate(2017, 10, 13) # Herbst
-            match |= date == QDate(2017, 10, 30) # Brückentag
-            match |= date == QDate(2017, 10, 31) # Reformationstag
-            match |= QDate(2017, 12, 22) <= date <= QDate(2018, 1, 5) # Weihnachten
-
-        if year in [2018, 2019]:
-            match |= QDate(2018, 2, 1) <= date <= QDate(2018, 2, 2) # Winter
-            match |= QDate(2018, 3, 19) <= date <= QDate(2018, 4, 3) # Ostern
-            match |= date in [QDate(2018, 4, 30), QDate(2018, 5, 11), QDate(2018, 5, 22)] # Pfingsten
-            match |= QDate(2018, 6, 28) <= date <= QDate(2018, 8, 8) # Sommer
-            match |= QDate(2018, 10, 1) <= date <= QDate(2018, 10, 12) # Herbst
-            match |= QDate(2018, 12, 24) <= date <= QDate(2019, 1, 4) # Weihnachten
-
-        if year in [2019, 2020]:
-            match |= QDate(2019, 1, 31) <= date <= QDate(2019, 2, 1) # Winter
-            match |= QDate(2019, 4, 8) <= date <= QDate(2019, 4, 23) # Ostern
-            match |= date in [QDate(2019, 5, 31), QDate(2019, 6, 11)] # Pfingsten
-            match |= QDate(2019, 7, 4) <= date <= QDate(2019, 8, 14) # Sommer
-            match |= QDate(2019, 10, 4) <= date <= QDate(2019, 10, 18) # Herbst
-            match |= QDate(2019, 12, 23) <= date <= QDate(2020, 1, 6) # Weihnachten
-
-        if year in [2020, 2021]:
-            match |= QDate(2020, 2, 3) <= date <= QDate(2020, 2, 4) # Winter
-            match |= QDate(2020, 3, 30) <= date <= QDate(2010, 4, 14) # Ostern
-            match |= date in [QDate(2020, 5, 22), QDate(2020, 6, 2)] # Pfingsten
-            match |= QDate(2020, 7, 16) <= date <= QDate(2020, 8, 26) # Sommer
-            match |= QDate(2020, 10, 12) <= date <= QDate(2020, 10, 23) # Herbst
-            match |= QDate(2020, 12, 23) <= date <= QDate(2021, 1, 8) # Weihnachten
-
-        return match
+        return date in self.days
 
 
 class VariantAnimation(QVariantAnimation):
