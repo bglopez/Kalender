@@ -433,10 +433,10 @@ class MainWindow(QMainWindow):
         self.onModelChanged()
 
     def initOverlays(self):
-        self.ferienNiedersachsenOverlay = FerienNiedersachsen(self.app)
+        self.ferienNiedersachsenOverlay = FerienNiedersachsen()
         self.calendar.overlays.append(self.ferienNiedersachsenOverlay)
 
-        self.holidayOverlay = HolidayOverlay(self.app)
+        self.holidayOverlay = HolidayOverlay()
         self.calendar.overlays.append(self.holidayOverlay)
 
     def initActions(self):
@@ -686,7 +686,7 @@ class MainWindow(QMainWindow):
 
 
 class HolidayOverlay(object):
-    def __init__(self, app):
+    def __init__(self):
         self.brush = QBrush(RED_LIGHT_COLOR)
         self.enabled = True
 
@@ -709,7 +709,7 @@ class HolidayOverlay(object):
 
 
 class FerienNiedersachsen(HolidayOverlay):
-    def __init__(self, app):
+    def __init__(self):
         self.brush = QBrush(GREEN_LIGHT_COLOR)
         self.enabled = True
 
